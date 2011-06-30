@@ -26,7 +26,7 @@ public interface IEquinoxVersionHandler {
 
 	public abstract IStatus canAddModule(IModule module);
 
-	public abstract String[] getFrameworkVMArguments(IPath installPath, IPath configPath,
+	public abstract String[] getFrameworkVMArguments(IPath installPath, String javaProfileID, IPath configPath,
 			IPath deployPath, boolean isTestEnv);
 
 	public abstract String[] getExcludedFrameworkProgramArguments(boolean debug,

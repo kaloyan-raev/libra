@@ -17,7 +17,12 @@ import org.eclipse.libra.framework.core.IOSGIFrameworkInstance;
 
 
 public interface IEquinoxFrameworkInstance  extends IOSGIFrameworkInstance {
+	public static final String PROPERTY_JAVA_PROFILE = "JAVA_PROFILE";
 
+	
 	public FrameworkInstanceConfiguration getEquinoxConfiguration() throws CoreException;
+	
+	public String getJavaPofile();
+	public void setJavaProfile(String id);
 
 }

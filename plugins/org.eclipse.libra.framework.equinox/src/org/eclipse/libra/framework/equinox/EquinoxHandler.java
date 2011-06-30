@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.libra.framework.core.FrameworkCorePlugin;
 import org.eclipse.libra.framework.core.Trace;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -109,13 +110,29 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		return null;
 	}
 
-	public String[] getFrameworkVMArguments(IPath installPath,
+	public String[] getFrameworkVMArguments(IPath installPath,String javaProfileID,
 			IPath configPath, IPath deployPath, boolean isTestEnv) {
-		// TODO Murat
+		
 		String configPathStr = deployPath.makeAbsolute().toOSString();
-		String profilePath =  deployPath.append("java6-server.profile").toOSString();
+		String profilePath =  deployPath.append("java.profile").toOSString();
+		Properties javaProfileProps = null;
+	
+		IExecutionEnvironment  environment[] = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+		for(IExecutionEnvironment e: environment){
+			if(javaProfileID.equals(e.getId())){
+				javaProfileProps = e.getProfileProperties();
+				break;
+			}
+		}
+		
 		try {
-			copyFile(this.getClass().getResourceAsStream("java6-server.profile"), new File(profilePath));
+			if("JavaSE-1.6-Server".equals(javaProfileID)){
+				copyFile(this.getClass().getResourceAsStream("java6-server.profile"), new File(profilePath));
+				
+			}else{
+				FileOutputStream os = new FileOutputStream(new File(profilePath));
+				javaProfileProps.store(os, "THIS FILE IS AUTO GENERATED");
+			}
 		} catch (IOException e) {
 			Trace.trace(Trace.SEVERE, "Could not set equinox VM arguments:"+e.getMessage(), e);
 		}
@@ -144,8 +161,7 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 			Trace.trace(Trace.FINER, "Creating runtime directory at "
 					+ deployPath.toOSString());
 
-		// TODO Murat
-		// Prepare a felix directory structure
+		// Prepare a  directory structure
 		File temp = deployPath.append("plugins").toFile();
 		if (!temp.exists())
 			temp.mkdirs();

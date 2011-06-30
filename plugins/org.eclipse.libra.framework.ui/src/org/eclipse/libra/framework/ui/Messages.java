@@ -104,6 +104,8 @@ public class Messages extends NLS {
 	public static String configurationEditorTargetDefinitionTitle;
 	public static String cleanTerminateRuntimeInstanceDialogTitle;
 	public static String cleanTerminateRuntimeInstanceMessage;
+	public static String javaProfileSection;
+	public static String javaProfileSectionDescription;
 
 	static {
 		NLS.initializeMessages(FrameworkUIPlugin.PLUGIN_ID + ".Messages", Messages.class);

@@ -71,6 +71,16 @@
 
    </extension>
    
+    <extension point="org.eclipse.wst.server.ui.editorPageSections">
+      <section
+         id="org.eclipse.libra.framework.equinox.editor.instance"
+         order="0"
+         insertionId="org.eclipse.wst.server.editor.overview.right"
+         typeIds="org.eclipse.libra.framework.equinox.serverType.*"
+         class="org.eclipse.libra.framework.equinox.ui.internal.JavaProfileEditorSection"/>
+
+   </extension>
+   
    <extension point="org.eclipse.wst.server.ui.wizardFragments">
       <fragment
          id="org.eclipse.libra.framework.equinox.30x"

@@ -26,6 +26,7 @@ import org.eclipse.libra.framework.core.OSGIFrameworkInstanceBehaviorDelegate;
 import org.eclipse.libra.framework.core.ProgressUtil;
 import org.eclipse.libra.framework.core.Trace;
 import org.eclipse.libra.framework.equinox.EquinoxFrameworkInstance;
+import org.eclipse.libra.framework.equinox.IEquinoxFrameworkInstance;
 import org.eclipse.libra.framework.equinox.IEquinoxVersionHandler;
 import org.eclipse.libra.framework.equinox.Messages;
 import org.eclipse.wst.server.core.IModule;
@@ -94,8 +95,9 @@ public class EquinoxFrameworkInstanceBehavior extends
 				// Ignore if there is a problem
 			}
 		}
+		String javaProfileID = ((IEquinoxFrameworkInstance)this.getFrameworkInstance()).getJavaPofile();
 
-		return getEquinoxVersionHandler().getFrameworkVMArguments(installPath, null, deployPath, false);
+		return getEquinoxVersionHandler().getFrameworkVMArguments(installPath, javaProfileID, null, deployPath, false);
 	}
 	
 	protected void publishServer(int kind, IProgressMonitor monitor)
