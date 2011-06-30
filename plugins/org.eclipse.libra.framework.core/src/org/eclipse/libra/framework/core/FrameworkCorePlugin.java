@@ -15,8 +15,13 @@
  *******************************************************************************/
 package org.eclipse.libra.framework.core;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -74,6 +79,22 @@ public class FrameworkCorePlugin extends AbstractUIPlugin {
 		(new DefaultScope()).getNode(PLUGIN_ID).put(id, value);
 	}
 	
+	
+	public static IBundleProjectService getBundleProjectService() {
+		PDECore instance = PDECore.getDefault();
+		if (instance == null)
+			return null;
+		return (IBundleProjectService) instance.acquireService(IBundleProjectService.class.getName());
+	}
+	
+	public static IBundleProjectDescription getDescription(IProject project) throws CoreException {
+		try {
+			return getBundleProjectService().getDescription(project);
+		}
+		catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
 
 
 }
