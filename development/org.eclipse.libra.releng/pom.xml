@@ -142,17 +142,12 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>codehaus.snapshots</id>
-			<url>http://repository.codehaus.org</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
+			<id>maven.eclipse.org</id>
+			<url>http://maven.eclipse.org/nexus/content/repositories/milestone-indigo</url>
 		</pluginRepository>
+		<!-- TODO: need 1.0.1.2-SNAPSHOT of the signing plugin until bugfix for 
+			https://bugs.eclipse.org/bugs/show_bug.cgi?id=347591 is available in maven.eclipse.org -->
 		<pluginRepository>
-			<!-- needed for https://bugs.eclipse.org/347591 -->
 			<id>intalio-dash-signing-plugin</id>
 			<url>http://intalio.org/public/maven2</url>
 			<snapshots>
@@ -162,16 +157,6 @@
 				<enabled>true</enabled>
 			</releases>
 		</pluginRepository>
-		<!-- <pluginRepository>
-			<id>maven.eclipse.org</id>
-			<url>http://maven.eclipse.org/nexus/content/groups/public</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository> -->
 	</pluginRepositories>
 
 </project>
