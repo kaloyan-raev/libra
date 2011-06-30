@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.libra.framework.equinox;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -20,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.libra.framework.core.FrameworkInstanceConfiguration;
 import org.eclipse.libra.framework.core.FrameworkInstanceDelegate;
 import org.eclipse.libra.framework.core.OSGIFrameworkInstanceBehaviorDelegate;
@@ -28,9 +26,7 @@ import org.eclipse.libra.framework.core.Trace;
 import org.eclipse.libra.framework.equinox.internal.EquinoxFrameworkInstanceBehavior;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.IRuntime;
 
@@ -131,6 +127,7 @@ public class EquinoxFrameworkInstance extends FrameworkInstanceDelegate implemen
 	public ITargetDefinition createDefaultTarget() throws CoreException {
 		
 
+		
 		IPath installPath = getServer().getRuntime().getLocation();
 
 		ITargetDefinition targetDefinition = TargetPlatformService.getDefault()
@@ -141,55 +138,33 @@ public class EquinoxFrameworkInstance extends FrameworkInstanceDelegate implemen
 		targetDefinition.setBundleContainers(containers);
 		targetDefinition.resolve(new NullProgressMonitor());
 
-		IResolvedBundle[] targetBundles = targetDefinition.getAllBundles();
-		List<NameVersionDescriptor> includedB = new ArrayList<NameVersionDescriptor>();
-		for (IResolvedBundle b : targetBundles) {
-			if (b.getStatus().getSeverity() == IStatus.OK) {
-
-				if (shouldInclude(b.getBundleInfo())) {
-					if (b.getStatus().getCode() == IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST) {
-						includedB.add(new NameVersionDescriptor(b
-								.getBundleInfo().getSymbolicName(), null,
-								NameVersionDescriptor.TYPE_PLUGIN));
-					} else {
-						includedB.add(new NameVersionDescriptor(b
-								.getBundleInfo().getSymbolicName(), null));
-					}
-				}
-
-			}
-
-		}
-		targetDefinition.setIncluded(includedB
-				.toArray(new NameVersionDescriptor[includedB.size()]));
-
 		TargetPlatformService.getDefault().saveTargetDefinition(
 				targetDefinition);
 		return targetDefinition;
 	}
 
-	private boolean shouldInclude(BundleInfo bundleInfo) {
-		String bundles[] = {"org.eclipse.osgi_"};
-		
-		for (String bundleName : bundles) {
-			if(bundleInfo.getLocation().toString().indexOf(bundleName)>0)
-				return true;
-		}
-		return false;
-	}
 
 	@SuppressWarnings("restriction")
 	private IBundleContainer[] getDefaultBundleContainers(IPath installPath) {
-		IBundleContainer[] containers = new IBundleContainer[1];
-		containers[0] = TargetPlatformService.getDefault()
-				.newDirectoryContainer(
-						installPath.append("plugins").makeAbsolute()
-								.toPortableString());
-
-		return containers;
+		return  new IBundleContainer[0];
 
 	}
 
+	
+	public String getFrameworkJarPath(){
+		IPath installPath = getServer().getRuntime().getLocation();
+		IPath plugins = installPath.append("plugins");
+		if (plugins.toFile().exists()) {
+			File[] files = plugins.toFile().listFiles();
+			for (File file : files) {
+				if (file.getName().indexOf("org.eclipse.osgi_") > -1) {
+					return file.getAbsolutePath();
+				}
+			}
+			
+		}
+		return null;
+	}
 	
 
 }

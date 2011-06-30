@@ -15,21 +15,27 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.libra.framework.core.FrameworkCorePlugin;
 import org.eclipse.libra.framework.core.Trace;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.wst.server.core.IModule;
-import org.osgi.framework.Version;
-
 
 public class EquinoxHandler implements IEquinoxVersionHandler {
 
@@ -61,7 +67,7 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 
 		List cp = new ArrayList();
 		IPath plugins = installPath.append("plugins");
-		
+
 		if (plugins.toFile().exists()) {
 			File[] files = plugins.toFile().listFiles();
 			for (File file : files) {
@@ -75,13 +81,12 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		return cp;
 	}
 
-	public String[] getFrameworkProgramArguments(IPath configPath, boolean debug,
-			boolean starting) {
+	public String[] getFrameworkProgramArguments(IPath configPath,
+			boolean debug, boolean starting) {
 
 		ArrayList<String> programArgs = new ArrayList<String>();
 		programArgs.add("-dev");
-		programArgs.add(configPath.makeAbsolute().toOSString()
-				+ "/dev.properties"); //$NON-NLS-1$
+		programArgs.add("file:"+configPath.append("dev.properties").toOSString()); //$NON-NLS-1$
 		programArgs.add("-configuration");
 		programArgs.add(configPath.makeAbsolute().toOSString()); //$NON-NLS-1$
 		if (debug) {
@@ -93,8 +98,9 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		programArgs.add(TargetPlatform.getWS());
 		programArgs.add("-arch"); //$NON-NLS-1$
 		programArgs.add(TargetPlatform.getOSArch());
+		programArgs.add("-consoleLog"); //$NON-NLS-1$
 		programArgs.add("-console"); //$NON-NLS-1$
-
+		 
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
 
@@ -103,11 +109,17 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		return null;
 	}
 
-	public String[] getFrameworkVMArguments(IPath installPath, IPath configPath,
-			IPath deployPath, boolean isTestEnv) {
+	public String[] getFrameworkVMArguments(IPath installPath,
+			IPath configPath, IPath deployPath, boolean isTestEnv) {
 		// TODO Murat
 		String configPathStr = deployPath.makeAbsolute().toOSString();
-		String vmArgs = "-D32 -Declipse.ignoreApp=true -Dosgi.noShutdown=true"; //$NON-NLS-1$ //$NON-NLS-2$
+		String profilePath =  deployPath.append("java6-server.profile").toOSString();
+		try {
+			copyFile(this.getClass().getResourceAsStream("java6-server.profile"), new File(profilePath));
+		} catch (IOException e) {
+			Trace.trace(Trace.SEVERE, "Could not set equinox VM arguments:"+e.getMessage(), e);
+		}
+		String vmArgs = "-Declipse.ignoreApp=true -Dosgi.noShutdown=true  -Dosgi.java.profile=file:"+profilePath; //$NON-NLS-1$ //$NON-NLS-2$
 
 		return new String[] { vmArgs };
 	}
@@ -123,7 +135,7 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 	}
 
 	public IStatus prepareFrameworkInstanceDirectory(IPath baseDir) {
-		return Status.OK_STATUS;// TomcatVersionHelper.createCatalinaInstanceDirectory(baseDir);
+		return Status.OK_STATUS;
 	}
 
 	public IStatus prepareDeployDirectory(IPath deployPath) {
@@ -151,10 +163,36 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		return true;
 	}
 
-
-
 	public void prepareFrameworkConfigurationFile(IPath configPath,
-			String workspaceBundles, String kernelBundles2) {
+			String workspaceBundles, String kernelBundles) {
+		String[] wsBundleIds =  workspaceBundles.split(" ");
+		String[] krBundleIds = kernelBundles.split(" ");
+
+		prepareDevProperties(configPath, wsBundleIds);
+		prepareConfigIni(configPath, wsBundleIds, krBundleIds);
+	}
+
+	private void prepareConfigIni(IPath configPath, String[] wsBundleIds,
+			String[] krBundleIds) {
+		String propertyInstall = "";
+		for (String bundle : wsBundleIds) {
+			if (bundle.indexOf("@") != -1)
+				bundle = bundle.substring(0, bundle.indexOf("@"));
+			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
+			for (IPluginModelBase iPluginModelBase : models) {
+				if (bundle
+						.indexOf(iPluginModelBase.getPluginBase().getId()) > -1) {
+					String bpath = iPluginModelBase.getInstallLocation();
+					if(bpath.endsWith("/"))
+						bpath = bpath.substring(0,bpath.length()-1);
+					if(iPluginModelBase.isFragmentModel())
+						propertyInstall += "reference:file:" + bpath+ ", ";
+					else
+						propertyInstall += "reference:file:" + bpath+ "@start, ";
+				}
+			}
+		}
+		
 		Properties properties = new Properties();
 		properties.setProperty(
 				"osgi.instance.area.default",
@@ -164,71 +202,42 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 								configPath.toPortableString().indexOf(
 										".metadata")));
 
-		String[] krBundles = kernelBundles2.split(" ");
-
-		properties.put("osgi.framework", krBundles[0]);
+		properties.put("osgi.framework", krBundleIds[0]);
 		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		int start = 4;
 		properties.put(
 				"osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
-		properties.setProperty(
-				"org.eclipse.equinox.simpleconfigurator.configUrl", "file:"
-						+ configPath.toPortableString() + "/bundles.info");
-		String[] bundless = workspaceBundles.split(" ");
-		String propertyInstall = "";
-		try {
-			// Create file
-			FileWriter fstream = new FileWriter(configPath.toPortableString()
-					+ "/bundles.info");
-			BufferedWriter out = new BufferedWriter(fstream);
-			out.write("#version=1\n");
-			for (String bundle : bundless) {
-				if (bundle.indexOf("@") != -1)
-					bundle = bundle.substring(0, bundle.indexOf("@"));
-				IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-				String modelId = "";
-				for (IPluginModelBase iPluginModelBase : models) {
-					if (bundle
-							.indexOf(iPluginModelBase.getPluginBase().getId()) > -1) {
-						modelId = iPluginModelBase.getPluginBase().getId();
-						Version version = iPluginModelBase
-								.getBundleDescription().getVersion();
-						out.write(modelId + "," + version + ",file:"
-								+ iPluginModelBase.getInstallLocation()
-								+ ",4,true\n");
+		for (int i = 1; i < krBundleIds.length; i++) {
+			String targetBundlePath = krBundleIds[i];
+			if (targetBundlePath != null && !(targetBundlePath.trim().equalsIgnoreCase(""))) {
+				String bundleId = getBundleId(targetBundlePath);
+				
+				File file = new File(targetBundlePath.substring(targetBundlePath.indexOf("/")));
+				if (file.isFile()) {
+					propertyInstall += targetBundlePath;
+					IPluginModelBase modelBase = PluginRegistry.findModel(bundleId);
+					if(modelBase != null && modelBase.isFragmentModel())
+						propertyInstall +=  ", ";
+					else
+						propertyInstall += "@start, ";
+				} else {
+					for (String string2 : file.list()) {
+						if (string2.indexOf(".jar") > -1) {
+							propertyInstall += targetBundlePath + string2;
+							String fbundleId = getBundleId(string2);
+							IPluginModelBase modelBase = PluginRegistry.findModel(fbundleId);
+							if(modelBase != null && modelBase.isFragmentModel())
+								propertyInstall +=  ", ";
+							else
+								propertyInstall += "@start, ";
+						}
 					}
-				}
-			}
-			out.close();
-		} catch (Exception e) {// Catch exception if any
-			System.err.println("Error: " + e.getMessage());
-		}
-
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.simpleconfigurator");
-		propertyInstall = "reference:file:" + model.getInstallLocation() + "@1:start,";
-
-		for (String string : krBundles) {
-			if (string != null && !(string.trim().equalsIgnoreCase(""))) {
-				File file = new File(string.substring(string.indexOf("/")));
-				if (file.isFile()){
-					if (string.indexOf(".jar") > -1) {
-						propertyInstall += string + "@2:start, ";
-
-					}
-				}else{
-				for (String string2 : file.list()) {
-					if (string2.indexOf(".jar") > -1) {
-						propertyInstall += string + string2 + "@2:start, ";
-
-					}
-				}
 				}
 			}
 
 		}
-
+		
 		properties.setProperty("osgi.bundles", propertyInstall);
-
 		properties.put("eclipse.ignoreApp", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("osgi.noShutdown", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -237,7 +246,82 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 					new FileOutputStream(configPath.append("config.ini")
 							.makeAbsolute().toFile()), "## AUTO GENERATED ##");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Trace.trace(Trace.SEVERE, "Could not create equinox dev.properties configrutaion file:"+e.getMessage(), e);
+		}
+	}
+
+	private String getBundleId(String targetBundlePath) {
+		IPath kbPath = new Path(targetBundlePath);
+		String bundleId = kbPath.lastSegment();
+		if(bundleId.endsWith(".jar"))
+			bundleId = bundleId.substring(0,bundleId.length()-4);
+		int vversioNloc = bundleId.indexOf("_");
+		if(vversioNloc > 0)
+			bundleId = bundleId.substring(0, vversioNloc);
+		return bundleId;
+	}
+
+	private String[] prepareDevProperties(IPath configPath, String[] wsBundleIds) {
+		try {
+			// Create file
+			FileWriter fstream = new FileWriter(configPath.toPortableString()
+					+ "/dev.properties");
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write("#OSAMI AUTO GENERATED\n");
+			for (String bundle : wsBundleIds) {
+				if (bundle.indexOf("@") != -1)
+					bundle = bundle.substring(0, bundle.indexOf("@"));
+				IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
+				String modelId = "";
+				for (IPluginModelBase iPluginModelBase : models) {			
+					if (bundle.indexOf(iPluginModelBase.getPluginBase().getId()) > -1) {
+						IProject pluginProject = iPluginModelBase.getUnderlyingResource().getProject();
+						IJavaProject javaProject = JavaCore.create(pluginProject);
+						IBundleProjectDescription bundleProjectDescription = FrameworkCorePlugin.getDescription(pluginProject);
+
+						IBundleClasspathEntry[] allCPEntry = bundleProjectDescription.getBundleClasspath();
+						modelId = iPluginModelBase.getPluginBase().getId();
+						out.write("\n"+modelId + "=");
+						for(IBundleClasspathEntry bcpe: allCPEntry){
+							if(bcpe.getSourcePath() != null && bcpe.getBinaryPath() == null)
+								out.write(" "+javaProject.getOutputLocation().makeRelativeTo(pluginProject.getFullPath()) +",");
+							else if(bcpe.getSourcePath() != null && bcpe.getBinaryPath() != null)
+								out.write(" "+bcpe.getBinaryPath().toOSString() +",");
+							else if(bcpe.getLibrary() != null && bcpe.getLibrary().toOSString().endsWith(".jar") )
+								out.write(" "+bcpe.getLibrary().toOSString() +",");
+							else 
+								out.write(" "+javaProject.getOutputLocation().makeRelativeTo(pluginProject.getFullPath()) +",");
+						}
+						
+					}
+				}
+			}
+			out.close();
+		} catch (Exception e) {
+			Trace.trace(Trace.SEVERE, "Could not create equinox dev.properties configuration file:"+e.getMessage(), e);
+		}
+		return wsBundleIds;
+	}
+	
+	
+	private  void copyFile(InputStream source, File destFile) throws IOException {
+
+
+		FileOutputStream destination = null;
+		 try {
+		  destination = new FileOutputStream(destFile);
+		  int c;
+		  while((c = source.read()) != -1){
+			  destination.write(c);
+		  }
+		 }
+		 finally {
+		  if(source != null) {
+		   source.close();
+		  }
+		  if(destination != null) {
+		   destination.close();
+		  }
 		}
 	}
 }

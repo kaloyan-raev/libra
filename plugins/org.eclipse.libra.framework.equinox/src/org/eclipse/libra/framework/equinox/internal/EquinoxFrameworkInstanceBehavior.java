@@ -134,9 +134,10 @@ public class EquinoxFrameworkInstanceBehavior extends
 		try {
 			equinoxConfiguration = getEquinoxRuntimeInstance().getEquinoxConfiguration();
 			publishHelper.exportBundles(modules, equinoxConfiguration, confDir);
+			String frameworkJarPath = "reference:file:"+getEquinoxRuntimeInstance().getFrameworkJarPath();
 			getEquinoxVersionHandler().prepareFrameworkConfigurationFile(confDir,
 					publishHelper.getServerModules(modules,"reference:file:", " " ),
-					publishHelper.getTargetBundles(equinoxConfiguration,"reference:file:", " "));
+					frameworkJarPath+" " +publishHelper.getTargetBundles(equinoxConfiguration,"reference:file:", " "));
 
 		} catch (CoreException e) {
 			Trace.trace(Trace.SEVERE, "Publishing failed", e);
@@ -157,4 +158,6 @@ public class EquinoxFrameworkInstanceBehavior extends
 
 		saveModulePublishLocations(p);
 	}
+	
+	
 }
