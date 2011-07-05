@@ -13,6 +13,7 @@
 		<eclipse-site>http://download.eclipse.org/eclipse/updates/3.7milestones/</eclipse-site>
 		<emf-site>http://download.eclipse.org/modeling/emf/emf/updates/2.7milestones/</emf-site>
 		<wtp-site>http://download.eclipse.org/webtools/repository/indigo/</wtp-site>
+		<gef-site>http://download.eclipse.org/tools/gef/updates/releases</gef-site>
 	</properties>
 
 	<modules>
@@ -28,6 +29,20 @@
 		<module>../org.eclipse.libra.repository</module>
 		<module>../../tests/org.eclipse.libra.facet.test</module>
 		<module>../../tests/org.eclipse.libra.warproducts.core.test</module>
+		
+		<module>../../features/org.eclipse.libra.framework.feature</module>
+		<module>../../features/org.eclipse.libra.framework.feature.source</module>
+		<module>../../plugins/org.eclipse.libra.framework.core</module>
+		<module>../../plugins/org.eclipse.libra.framework.ui</module>
+		<module>../../plugins/org.eclipse.libra.framework.equinox</module>
+		<module>../../plugins/org.eclipse.libra.framework.equinox.ui</module>
+		<module>../../plugins/org.eclipse.libra.framework.felix</module>
+		<module>../../plugins/org.eclipse.libra.framework.felix.ui</module>
+		<module>../../plugins/org.eclipse.libra.framework.jonas</module>
+		<module>../../plugins/org.eclipse.libra.framework.jonas.ui</module>
+		<module>../../plugins/org.eclipse.libra.framework.knopflerfish</module>
+		<module>../../plugins/org.eclipse.libra.framework.knopflerfish.ui</module>
+
 	</modules>
 
 	<build>
@@ -136,6 +151,11 @@
 		<repository>
 			<id>wtp-sdk</id>
 			<url>${wtp-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>gef-sdk</id>
+			<url>${gef-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
