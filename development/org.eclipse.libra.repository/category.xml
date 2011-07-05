@@ -12,6 +12,12 @@
    <feature url="features/org.eclipse.libra.warproducts.feature.source_0.1.0.qualifier.jar" id="org.eclipse.libra.warproducts.feature.source" version="0.1.0.qualifier">
       <category name="libra-sdk"/>
    </feature>
+   <feature url="features/org.eclipse.libra.framework.feature_0.1.0.qualifier.jar" id="org.eclipse.libra.framework.feature" version="0.1.0.qualifier">
+      <category name="libra"/>
+   </feature>
+   <feature url="features/org.eclipse.libra.framework.feature.source_0.1.0.qualifier.jar" id="org.eclipse.libra.framework.feature.source" version="0.1.0.qualifier">
+      <category name="libra-sdk"/>
+   </feature>
    <category-def name="libra" label="Enterprise Tools for the OSGi Service Platform"/>
    <category-def name="libra-sdk" label="Enterprise Tools for the OSGi Service Platform SDK"/>
 </site>
