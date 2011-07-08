@@ -12,6 +12,7 @@
 		<tycho-version>0.12.0</tycho-version>
 		<eclipse-site>http://download.eclipse.org/eclipse/updates/3.7milestones/</eclipse-site>
 		<emf-site>http://download.eclipse.org/modeling/emf/emf/updates/2.7milestones/</emf-site>
+		<dtp-site>http://download.eclipse.org/datatools/updates/</dtp-site>
 		<wtp-site>http://download.eclipse.org/webtools/repository/indigo/</wtp-site>
 		<gef-site>http://download.eclipse.org/tools/gef/updates/releases</gef-site>
 	</properties>
@@ -101,7 +102,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>2.3.2-SNAPSHOT</version>
+					<version>2.3.2</version>
 					<configuration>
 						<findbugsXmlOutput>true</findbugsXmlOutput>
 						<failOnError>false</failOnError>
@@ -149,6 +150,11 @@
 			<layout>p2</layout>
 		</repository>
 		<repository>
+			<id>dtp-sdk</id>
+			<url>${dtp-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
 			<id>wtp-sdk</id>
 			<url>${wtp-site}</url>
 			<layout>p2</layout>
@@ -162,16 +168,12 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<!-- need maven-findbugs-2.3.2-SNAPSHOT atm, see http://jira.codehaus.org/browse/MFINDBUGS-122 -->
-			<id>codehaus.snapshots</id>
-			<url>http://snapshots.repository.codehaus.org/</url>
-		</pluginRepository>
-		<pluginRepository>
 			<id>maven.eclipse.org</id>
-			<url>http://maven.eclipse.org/nexus/content/groups/public</url>
+			<url>http://maven.eclipse.org/nexus/content/repositories/milestone-indigo</url>
 		</pluginRepository>
+		<!-- TODO: need 1.0.1.2-SNAPSHOT of the signing plugin until bugfix for 
+			https://bugs.eclipse.org/bugs/show_bug.cgi?id=347591 is available in maven.eclipse.org -->
 		<pluginRepository>
-			<!-- needed for https://bugs.eclipse.org/347591 -->
 			<id>intalio-dash-signing-plugin</id>
 			<url>http://intalio.org/public/maven2</url>
 			<snapshots>
