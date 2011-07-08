@@ -23,6 +23,18 @@ public interface IOSGIFrameworkInstance {
 	public static final String PROPERTY_DEBUG = "debug";
 	public static final String PROPERTY_INSTANCE_DIR = "instanceDir";
 	public static final String PROPERTY_DEPLOY_DIR = "deployDir";
+	public static final String PROPERTY_JAVA_PROFILE = "JAVA_PROFILE";
+	
+	/**
+	 * Gets the java profile for the  framework instance.  If not set,
+	 * the instance profile is determined from the JRE setting.  
+	 * 
+	 * @return javaProfile for the framework instance exists. Returns null
+	 * if not set.
+	 */
+	public String getJavaPofile();
+	public void setJavaProfile(String id);
+
 	
 	/**
 	 * Gets the directory where the server instance exists.  If not set,

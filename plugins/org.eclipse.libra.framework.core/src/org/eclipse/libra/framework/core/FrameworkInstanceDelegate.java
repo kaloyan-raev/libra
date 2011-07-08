@@ -146,6 +146,7 @@ public abstract class FrameworkInstanceDelegate extends ServerDelegate implement
 
 				// TODO - OSAMI After adding faceted projects enable this
 				// check....
+				// MUST CHECK IF THE FRAMEWORK ALLOWS REMOTE MANAGEMENT
 
 				// if (module.getProject() != null) {
 				// status = FacetUtil.verifyFacets(module.getProject(),
@@ -245,6 +246,9 @@ public abstract class FrameworkInstanceDelegate extends ServerDelegate implement
 			for (int i = 0; i < size; i++) {
 				// IModule module3 = add[i];
 				// TODO - OSAMI Do something to add the module....
+				// If the framework is running this will require an install + start
+				// Also need to check if framework allows remote management
+				// If an earliver version was already deployed we need to stop+uninstall
 			}
 		}
 
@@ -253,12 +257,24 @@ public abstract class FrameworkInstanceDelegate extends ServerDelegate implement
 			for (int j = 0; j < size2; j++) {
 				// IModule module3 = remove[j];
 				// TODO - OSAMI Do something to remove the module....
+				// If the framework is running this will require an stop + uninstall
+				// Also need to check if framework allows remote management
 
 			}
 		}
 		// config.save(config.getFolder(), monitor);
 	}
 
+	
+	public void setJavaProfile(String profileID) {
+		setAttribute(IOSGIFrameworkInstance.PROPERTY_JAVA_PROFILE, profileID);
+	}
+
+	public String getJavaPofile() {
+		return getAttribute(PROPERTY_JAVA_PROFILE, "JavaSE-1.6");
+		
+	}
+	
 	@SuppressWarnings("restriction")
 	public abstract ITargetDefinition createDefaultTarget()
 			throws CoreException;

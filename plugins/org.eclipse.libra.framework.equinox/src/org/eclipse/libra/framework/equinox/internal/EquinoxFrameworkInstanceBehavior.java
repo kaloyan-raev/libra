@@ -139,7 +139,7 @@ public class EquinoxFrameworkInstanceBehavior extends
 			String frameworkJarPath = "reference:file:"+getEquinoxRuntimeInstance().getFrameworkJarPath();
 			getEquinoxVersionHandler().prepareFrameworkConfigurationFile(confDir,
 					publishHelper.getServerModules(modules,"reference:file:", " " ),
-					frameworkJarPath+" " +publishHelper.getTargetBundles(equinoxConfiguration,"reference:file:", " "));
+					frameworkJarPath, publishHelper.getTargetBundles(equinoxConfiguration));
 
 		} catch (CoreException e) {
 			Trace.trace(Trace.SEVERE, "Publishing failed", e);

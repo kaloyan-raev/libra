@@ -116,6 +116,15 @@ public abstract class PublishHelper {
 		}
 		return all.toArray(new String[all.size()]);
 	}
+	
+	public IResolvedBundle[] getTargetBundles(FrameworkInstanceConfiguration config) {
+		List<String> all = new ArrayList<String>();
+		ITargetDefinition targetDefinition = config.getTargetDefinition();
+		targetDefinition.resolve(new NullProgressMonitor());
+		IResolvedBundle[] targetBundles = targetDefinition.getBundles();
+		return targetBundles;
+	}
+
 
 	public String[] getTargetBundleIds(FrameworkInstanceConfiguration config) {
 		List<String> all = new ArrayList<String>();

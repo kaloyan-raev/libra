@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.wst.server.core.IModule;
 
 public interface IEquinoxVersionHandler {
@@ -42,6 +43,6 @@ public interface IEquinoxVersionHandler {
 
 	public abstract IStatus verifyInstallPath(IPath location);
 
-	public abstract void prepareFrameworkConfigurationFile(IPath confDir,String workspaceBundles, String kernelBundles);
+	public abstract void prepareFrameworkConfigurationFile(IPath confDir,String workspaceBundles, String frameworkJar, IResolvedBundle[] kernelBundles);
 
 }

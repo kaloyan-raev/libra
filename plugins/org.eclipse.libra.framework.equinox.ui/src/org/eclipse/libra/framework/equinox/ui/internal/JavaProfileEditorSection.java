@@ -15,10 +15,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.libra.framework.core.IOSGIExecutionEnvironment;
+import org.eclipse.libra.framework.core.IOSGIFrameworkInstance;
 import org.eclipse.libra.framework.equinox.IEquinoxFrameworkInstance;
 import org.eclipse.libra.framework.ui.ContextIds;
 import org.eclipse.libra.framework.ui.Messages;
@@ -72,7 +72,7 @@ public class JavaProfileEditorSection extends ServerEditorSection {
 				if (updating)
 					return;
 				updating = true;
-				if (IEquinoxFrameworkInstance.PROPERTY_JAVA_PROFILE
+				if (IOSGIFrameworkInstance.PROPERTY_JAVA_PROFILE
 						.equals(event.getPropertyName())) {
 					validate();
 				}
@@ -116,21 +116,12 @@ public class JavaProfileEditorSection extends ServerEditorSection {
 		toolkit.paintBordersFor(composite);
 		section.setClient(composite);
 
-		// server directory
+		// Java Profiles Selection
 		Label label = createLabel(toolkit, composite,
 				Messages.javaProfileSection);
 		GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
 		label.setLayoutData(data);
-
-		IExecutionEnvironment environment[] = JavaRuntime
-				.getExecutionEnvironmentsManager().getExecutionEnvironments();
-		String[] envList = new String[environment.length + 1];
-		int i = 0;
-		for (IExecutionEnvironment e : environment) {
-			envList[i++] = e.getId();
-		}
-		envList[envList.length - 1] = "JavaSE-1.6-Server";
-
+		String[] envList =IOSGIExecutionEnvironment.getExecutionEnvironmentIds();
 		javaProfileCombo = SWTFactory.createCombo(composite, SWT.SINGLE
 				| SWT.BORDER | SWT.READ_ONLY, 1, envList);
 		javaProfileCombo.addModifyListener(new ModifyListener() {
@@ -183,19 +174,14 @@ public class JavaProfileEditorSection extends ServerEditorSection {
 		String id = frameworkInstance.getJavaPofile();
 
 		if (javaProfileCombo != null) {
-			IExecutionEnvironment environment[] = JavaRuntime
-					.getExecutionEnvironmentsManager()
-					.getExecutionEnvironments();
+			String[] envList =IOSGIExecutionEnvironment.getExecutionEnvironmentIds();
 			int i = 0;
-			for (IExecutionEnvironment e : environment) {
-				if (id.equals(e.getId())) {
+			for (String e : envList) {
+				if (id.equals(e)) {
 					javaProfileCombo.select(i);
 					break;
 				}
 				i++;
-			}
-			if (id.equals("JavaSE-1.6-Server")) {
-				javaProfileCombo.select(environment.length);
 			}
 		}
 		updating = false;

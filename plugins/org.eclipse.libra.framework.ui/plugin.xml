@@ -12,5 +12,10 @@
  -->
 
 <plugin>
-
+<extension point="org.eclipse.wst.server.ui.serverImages">
+  <image
+     id="org.eclipse.wst.server.ui.web"
+     typeIds="osgi.bundle"
+     icon="icons/obj16/bundle_obj.png"/>
+</extension>
 </plugin>

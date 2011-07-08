@@ -44,11 +44,11 @@ public class FrameworkUIPlugin extends AbstractUIPlugin {
 	private static URL ICON_BASE_URL;
 
 	private static final String URL_OBJ = "obj16/";
-	private static final String URL_WIZBAN = "wizban/";
+	//private static final String URL_WIZBAN = "wizban/";
 
 	public static final String PLUGIN_ID = "org.eclipse.libra.framework.ui";
 
-	public static final String IMG_WIZ_FELIX = "wizFelix";
+	//public static final String IMG_WIZ_FELIX = "wizFelix";
 
 	public static final String IMG_WEB_MODULE = "webModule";
 	public static final String IMG_MIME_MAPPING = "mimeMapping";
@@ -68,7 +68,7 @@ public class FrameworkUIPlugin extends AbstractUIPlugin {
 	protected ImageRegistry createImageRegistry() {
 		ImageRegistry registry = new ImageRegistry();
 		
-		registerImage(registry, IMG_WIZ_FELIX, URL_WIZBAN + "felix_wiz.png");
+		//registerImage(registry, IMG_WIZ_FELIX, URL_WIZBAN + "fmwk_wiz.png");
 		
 		registerImage(registry, IMG_WEB_MODULE, URL_OBJ + "web_module.gif");
 		registerImage(registry, IMG_MIME_MAPPING, URL_OBJ + "mime_mapping.gif");

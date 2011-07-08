@@ -100,7 +100,7 @@ public class OSGIFrameworkComposite extends Composite {
 		
 		wizard.setTitle(Messages.wizardTitle);
 		wizard.setDescription(Messages.wizardDescription);
-		wizard.setImageDescriptor(FrameworkUIPlugin.getImageDescriptor(FrameworkUIPlugin.IMG_WIZ_FELIX));
+		//wizard.setImageDescriptor(FrameworkUIPlugin.getImageDescriptor(FrameworkUIPlugin.IMG_WIZ_FELIX));
 		
 		createControl();
 	}

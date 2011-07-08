@@ -166,14 +166,4 @@ public class EquinoxFrameworkInstance extends FrameworkInstanceDelegate implemen
 		return null;
 	}
 	
-	
-	public void setJavaProfile(String profileID) {
-		setAttribute(IEquinoxFrameworkInstance.PROPERTY_JAVA_PROFILE, profileID);
-	}
-
-	public String getJavaPofile() {
-		return getAttribute(PROPERTY_JAVA_PROFILE, "JavaSE-1.6");
-		
-	}
-
 }
