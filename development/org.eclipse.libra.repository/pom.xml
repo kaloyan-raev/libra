@@ -88,12 +88,12 @@
 									<tasks>
 										<delete includeemptydirs="false">
 											<fileset
-												dir="/home/data/httpd/download.eclipse.org/libra/maintenance/snapshot">
+												dir="${p2-publish-dir}">
 												<include name="**" />
 											</fileset>
 										</delete>
 										<copy includeemptydirs="false"
-											todir="/home/data/httpd/download.eclipse.org/libra/maintenance/snapshot">
+											todir="${p2-publish-dir}">
 											<fileset dir="target/checksumFix">
 												<include name="**" />
 											</fileset>
