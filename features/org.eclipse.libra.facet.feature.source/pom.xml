@@ -12,5 +12,6 @@
 	<artifactId>org.eclipse.libra.facet.feature.source</artifactId>
 	<packaging>eclipse-feature</packaging>
 	<name>OSGi Bundle Facet SDK Feature</name>
+	<version>0.1.1-SNAPSHOT</version>
 	
 </project>
