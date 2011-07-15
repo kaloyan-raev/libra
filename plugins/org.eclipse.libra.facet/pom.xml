@@ -12,6 +12,7 @@
 	<artifactId>org.eclipse.libra.facet</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<name>OSGi Bundle Facet Core Plug-in</name>
+	<version>0.1.1-SNAPSHOT</version>
 
 	<build>
 		<plugins>

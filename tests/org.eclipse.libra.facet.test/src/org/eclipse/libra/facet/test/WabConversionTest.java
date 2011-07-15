@@ -13,6 +13,7 @@ package org.eclipse.libra.facet.test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
@@ -40,11 +41,16 @@ import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.wst.common.project.facet.core.FacetedProjectFramework;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
+import org.eclipse.wst.common.project.facet.core.IProjectFacet;
+import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.junit.Assert;
 import org.junit.Test;
+
+
 
 
 
@@ -54,10 +60,14 @@ public class WabConversionTest {
 	private static final String WEB_PRJ_LOCATION = "resources/testWeb.zip_";
 	private static final String JAVA_PRJ_LOCATION = "resources/testJava.zip_";
 	private static final String JPA_PRJ_LOCATION = "resources/testJPA.zip_";
+	private static final String JPA_UTILITY_PRJ_LOCATION = "resources/testJPAwithUtility.zip_";
 	private static final String SIMPLE_PRJ_LOCATION = "resources/testSimple.zip_";
 	private static final String WEB_PRJ_NAME = "testWeb";
 	private static final String JAVA_PRJ_NAME = "testJava";
 	private static final String JPA_PRJ_NAME = "testJPA";
+	private static final String JPA_CREATE_PRJ_NAME = "testJPACreate";
+	private static final String JPA_UTILITY_CREATE_PRJ_NAME = "testJPAUtilityCreate";
+	private static final String JPA_UTILITY_PRJ_NAME = "testJPAwithUtility";
 	private static final String SIMPLE_PRJ_NAME = "testSimple";
 	private static final String WEB_REFERRING_JAVA_PRJ_LOCATION = "resources/testWebReferringJava.zip_";
 	private static final String WEB_REFERRING_JAVA_PRJ_NAME = "testWebReferringJava";
@@ -84,7 +94,27 @@ public class WabConversionTest {
 	private static final String JAVA_PRJ_COPY_LOCATION = "resources/testJavaCopy.zip_";
 	private static final String JAVA_PRJ_COPY_NAME = "testJavaCopy";
 
-
+	
+	@Test
+	public void createJPAProject() throws Exception {     
+		IFacetedProjectWorkingCopy fProject = FacetedProjectFramework.createNewProject();
+		fProject.setProjectName(JPA_CREATE_PRJ_NAME);
+		HashSet<IProjectFacetVersion> facets = getFacets(new String[] {"java", "jpt.jpa", "osgi.bundle"});
+		fProject.setProjectFacets(facets);
+		fProject.commitChanges(monitor);
+		checkMetaInf(fProject.getProject());
+	}
+	
+	@Test
+	public void createJPAUtilityProject() throws Exception {     
+		IFacetedProjectWorkingCopy fProject = FacetedProjectFramework.createNewProject();
+		fProject.setProjectName(JPA_UTILITY_CREATE_PRJ_NAME);
+		HashSet<IProjectFacetVersion> facets = getFacets(new String[] {"java", "jpt.jpa", "jst.utility", "osgi.bundle"});
+		fProject.setProjectFacets(facets);
+		fProject.commitChanges(monitor);
+		checkMetaInf(fProject.getProject());
+	}
+		
 	@Test
 	public void convertSimpleProject() throws Exception {
 		IProject simpleProject = importProjectInWorkspace(SIMPLE_PRJ_LOCATION, SIMPLE_PRJ_NAME);
@@ -107,7 +137,7 @@ public class WabConversionTest {
 		
     	checkJavaProject(javaProject, JAVA_PRJ_NAME, "TestJava", null, "1.0.0.qualifier", new String[] {"javapack", "javapack1"}, description);
 	}
-
+	
 	@Test
 	public void convertJavaProjectCustomHeaders() throws Exception {
 
@@ -173,6 +203,7 @@ public class WabConversionTest {
     	checkWebProject(webProject, WEB_PRJ_NAME, "TestWeb", null, "1.0.0.qualifier", new String[] {"test", "test1"}, "/" + WEB_PRJ_NAME, description);
 	}
 	
+	
 	@Test
 	public void convertJPAProject() throws Exception {
 		IProject jpaProject = importProjectInWorkspace(JPA_PRJ_LOCATION, JPA_PRJ_NAME);
@@ -183,7 +214,18 @@ public class WabConversionTest {
 		
     	checkJPAProject(jpaProject, JPA_PRJ_NAME, "TestJPA", null, "1.0.0.qualifier", new String[] {"test"}, description);
 	}
-
+	
+	@Test
+	public void convertJPAProjectWithUtilityFacet() throws Exception {
+		IProject jpaProject = importProjectInWorkspace(JPA_UTILITY_PRJ_LOCATION, JPA_UTILITY_PRJ_NAME);
+    	new ConvertProjectsToBundlesOperation(new IProject[]{jpaProject}).run(monitor);
+    	
+    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
+    	IBundleProjectDescription description = bundleProjectService.getDescription(jpaProject);
+		
+    	checkJPAProject(jpaProject, JPA_UTILITY_PRJ_NAME, "TestJPAwithUtility", null, "1.0.0.qualifier", new String[] {"test"}, description);
+	}
+	
 	@Test
 	public void convertWebProjectCustomHeders() throws Exception {
 		IProject webProject = importProjectInWorkspace(WEB_PRJ_COPY_LOCATION, WEB_PRJ_COPY_NAME);
@@ -282,6 +324,7 @@ public class WabConversionTest {
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
 	
+	
 	private void checkWebProject(IProject project, String expectedSymbolicName, String expectedBundleName, String expectedVendor, String expectedVersion, String[] expectedPackageExports, String expectedWebContextPath, IBundleProjectDescription description) throws JavaModelException {
 		checkJavaProject(project, expectedSymbolicName, expectedBundleName, expectedVendor, expectedVersion, expectedPackageExports, description);
 		checkWebPackageImports(description);
@@ -307,7 +350,17 @@ public class WabConversionTest {
 		Assert.assertNull(bundleClasspath[0].getBinaryPath());
 		Assert.assertEquals("src/", bundleClasspath[0].getSourcePath().toPortableString());
 		IPath outputFolder = description.getDefaultOutputFolder();
-		Assert.assertEquals("build/classes", outputFolder.toString());
+		Assert.assertEquals("build/classes", outputFolder.toString());			
+		checkMetaInf(project);
+	}
+
+	private void checkMetaInf(IProject project) {
+		Assert.assertTrue(project.getFolder("/META-INF/").exists());
+		Assert.assertTrue(project.getFile("/META-INF/MANIFEST.MF").exists());
+		Assert.assertTrue(project.getFile("/META-INF/persistence.xml").exists());		
+		Assert.assertFalse(project.getFolder("/src/META-INF/").exists());	
+		Assert.assertFalse(project.getFile("/src/META-INF/MANIFEST.MF").exists());
+		Assert.assertFalse(project.getFile("/src/META-INF/persistence.xml").exists());
 	}
 
 	private void checkJavaProject(IProject project, String expectedSymbolicName, String expectedBundleName, String expectedVendor, String expectedVersion, String[] expectedPackageExports, IBundleProjectDescription description) throws JavaModelException {
@@ -419,4 +472,14 @@ public class WabConversionTest {
 		return false;
 	}
 	
+	private HashSet<IProjectFacetVersion> getFacets(String[] facetNames) {
+		HashSet<IProjectFacetVersion> facets = new HashSet<IProjectFacetVersion>();
+		for(int i=0; i<facetNames.length; i++) {
+			IProjectFacet aFacet = ProjectFacetsManager.getProjectFacet(facetNames[i]);
+			IProjectFacetVersion aFacetVersion = aFacet.getDefaultVersion();
+			facets.add(aFacetVersion);	
+		}
+		return facets;
+	}
+			
 }
