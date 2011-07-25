@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.libra.facet.ui.popup.actions;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.hasFeatureNature;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.hasUpdateSiteNature;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isOSGiBundle;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +28,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.libra.facet.OSGiBundleFacetUtils;
+import org.eclipse.libra.facet.internal.ui.LibraFacetUIPlugin;
 import org.eclipse.libra.facet.ui.wizards.ConvertProjectsToBundlesWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -102,13 +106,14 @@ public class ConvertProjectsToBundlesAction implements IObjectActionDelegate {
 		for (IProject project : projects) {
 			try {
 				if (project.isOpen() && 
-						!OSGiBundleFacetUtils.hasFeatureNature(project) &&
-						!OSGiBundleFacetUtils.hasUpdateSiteNature(project) &&
-						!OSGiBundleFacetUtils.isOSGiBundle(project)) {
+						!hasFeatureNature(project) &&
+						!hasUpdateSiteNature(project) &&
+						!isOSGiBundle(project)) {
 					unconverted.add(project);
 				}
 			} catch (CoreException e) {
-				// do nothing
+				LibraFacetUIPlugin.logError(e);
+				// do nothing - skip this (probably corrupted) project
 			}
 		}
 		return unconverted.toArray(new IProject[unconverted.size()]);

@@ -12,10 +12,16 @@ package org.eclipse.libra.facet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.libra.facet.internal.LibraFacetPlugin;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.wst.common.componentcore.ComponentCore;
+import org.eclipse.wst.common.componentcore.resources.IVirtualComponent;
 import org.eclipse.wst.common.project.facet.core.FacetedProjectFramework;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
@@ -43,6 +49,9 @@ public class OSGiBundleFacetUtils {
 	public static final String WEB_INF_CLASSES = "WEB-INF/classes/"; //$NON-NLS-1$
 	public static final String META_INF = "META-INF"; //$NON-NLS-1$
 	public static final String MANIFEST_URI = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+	public static final IPath MANIFEST_PATH = new Path(MANIFEST_URI);
+	public static final String VIRTUAL_COMPONENT_URI = ".settings/org.eclipse.wst.common.component"; //$NON-NLS-1$
+	public static final IPath VIRTUAL_COMPONENT_PATH = new Path(VIRTUAL_COMPONENT_URI);
 	
 	public static final String WEB_CONTEXT_PATH_HEADER = "Web-ContextPath"; //$NON-NLS-1$
 	public static final String META_PERSISTENCE_HEADER = "Meta-Persistence"; //$NON-NLS-1$
@@ -78,6 +87,10 @@ public class OSGiBundleFacetUtils {
 	public static boolean isWebProject(IProject project) throws CoreException {
 		return FacetedProjectFramework.hasProjectFacet(project, WEB_FACET);
 	}
+	
+	public static boolean isWebApplicationBundle(IProject project) throws CoreException {
+		return isWebProject(project) && isOSGiBundle(project);
+	}	
 
 	public static boolean isJpaProject(IProject project) throws CoreException {
 		return FacetedProjectFramework.hasProjectFacet(project, JPA_FACET);
@@ -95,5 +108,42 @@ public class OSGiBundleFacetUtils {
 		}
 		return false;
 	}
+	
+	public static IBundleProjectDescription getBundleProjectDescription(IProject project) throws CoreException {
+    	IBundleProjectService bundleProjectService = LibraFacetPlugin.getDefault().getBundleProjectService();
+    	return bundleProjectService.getDescription(project);
+	}
 
+	public static String getContextRootFromWTPModel(IProject project) {
+		IVirtualComponent component = ComponentCore.createComponent(project);
+		String contextRoot = component.getMetaProperties().getProperty(CONTEXTROOT);
+		
+		// return null if context root is empty
+		if (contextRoot == null || contextRoot.length() == 0) 
+			return null;
+		
+		// add leading slash if not available
+		if (contextRoot.charAt(0) != '/') {
+			contextRoot = '/' + contextRoot;
+		}
+		return contextRoot;
+	}
+	
+	public static void setContextRootInWTPModel(IProject project, String contextRoot) {
+		IVirtualComponent component = ComponentCore.createComponent(project);
+		component.setMetaProperty(CONTEXTROOT, contextRoot);
+	}	
+	
+	public static String getContextRootFromPDEModel(IProject project) throws CoreException {
+		IBundleProjectDescription bundleProjectDescription = getBundleProjectDescription(project);
+		String rootContext = bundleProjectDescription.getHeader(WEB_CONTEXT_PATH_HEADER);
+		return rootContext;
+	}
+	
+	public static void setContextRootInPDEModel(IProject project, String contextRoot, IProgressMonitor monitor) throws CoreException {
+		IBundleProjectDescription bundleProjectDescription = getBundleProjectDescription(project); 
+		bundleProjectDescription.setHeader(WEB_CONTEXT_PATH_HEADER, contextRoot);
+		bundleProjectDescription.apply(monitor);
+	}	
+	
 }

@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.libra.facet.ui.operations;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isWebProject;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.libra.facet.OSGiBundleFacetUtils;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 
@@ -33,7 +34,7 @@ public class ConvertProjectsToBundlesOperation extends WorkspaceModifyOperation 
 
 		// first convert non-Web projects
 		for (IProject project : fProjects) {
-			if (!OSGiBundleFacetUtils.isWebProject(project)) {
+			if (!isWebProject(project)) {
 				new ConvertProjectToBundleOperation(project).execute(monitor);
 			}
 		}
@@ -41,7 +42,7 @@ public class ConvertProjectsToBundlesOperation extends WorkspaceModifyOperation 
 		// then convert the Web projects
 		// this will make the dependencies from referenced libraries to be calculated correctly 
 		for (IProject project : fProjects) {
-			if (OSGiBundleFacetUtils.isWebProject(project)) {
+			if (isWebProject(project)) {
 				new ConvertProjectToBundleOperation(project).execute(monitor);
 			}
 		}

@@ -12,6 +12,7 @@
 	<artifactId>org.eclipse.libra.facet.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<name>OSGi Bundle Facet UI Plug-in</name>
+	<version>0.1.1-SNAPSHOT</version>
 
 	<build>
 		<plugins>

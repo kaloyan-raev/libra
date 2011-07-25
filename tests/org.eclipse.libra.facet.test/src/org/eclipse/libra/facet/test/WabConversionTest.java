@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.libra.facet.test;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.BUILD_PROPERTIES;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.getBundleProjectDescription;
+import static org.eclipse.wst.common.tests.OperationTestCase.deleteAllProjects;
+import static org.eclipse.wst.common.tests.OperationTestCase.waitOnJobs;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,19 +30,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.etools.common.test.apitools.ProjectUnzipUtil;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.libra.facet.Activator;
 import org.eclipse.libra.facet.OSGiBundleFacetInstallConfig;
 import org.eclipse.libra.facet.OSGiBundleFacetUninstallConfig;
 import org.eclipse.libra.facet.OSGiBundleFacetUninstallStrategy;
-import org.eclipse.libra.facet.OSGiBundleFacetUtils;
 import org.eclipse.libra.facet.ui.operations.ConvertProjectsToBundlesOperation;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.internal.core.PDECore;
@@ -47,14 +51,13 @@ import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 
 
-
-
-@SuppressWarnings("restriction")
 public class WabConversionTest {
 	private static final NullProgressMonitor monitor = new NullProgressMonitor();
 	private static final String WEB_PRJ_LOCATION = "resources/testWeb.zip_";
@@ -87,41 +90,27 @@ public class WabConversionTest {
 	private static final String SIMPLE_CONVERTED_PRJ_NAME = "testSimpleConverted";
 	private static final String PLUGIN_CONVERTED_PRJ_LOCATION = "resources/testPluginConverted.zip_";
 	private static final String PLUGIN_CONVERTED_PRJ_NAME = "testPluginConverted";
-	@SuppressWarnings("unused")
-	private static final String SIMPLE_PRJ_COPY_LOCATION = "resources/testSimpleCopy.zip_";
-	@SuppressWarnings("unused")
-	private static final String SIMPLE_PRJ_COPY_NAME = "testSimpleCopy";
 	private static final String JAVA_PRJ_COPY_LOCATION = "resources/testJavaCopy.zip_";
 	private static final String JAVA_PRJ_COPY_NAME = "testJavaCopy";
-
-	
-	@Test
-	public void createJPAProject() throws Exception {     
-		IFacetedProjectWorkingCopy fProject = FacetedProjectFramework.createNewProject();
-		fProject.setProjectName(JPA_CREATE_PRJ_NAME);
-		HashSet<IProjectFacetVersion> facets = getFacets(new String[] {"java", "jpt.jpa", "osgi.bundle"});
-		fProject.setProjectFacets(facets);
-		fProject.commitChanges(monitor);
-		checkMetaInf(fProject.getProject());
-	}
-	
-	@Test
-	public void createJPAUtilityProject() throws Exception {     
-		IFacetedProjectWorkingCopy fProject = FacetedProjectFramework.createNewProject();
-		fProject.setProjectName(JPA_UTILITY_CREATE_PRJ_NAME);
-		HashSet<IProjectFacetVersion> facets = getFacets(new String[] {"java", "jpt.jpa", "jst.utility", "osgi.bundle"});
-		fProject.setProjectFacets(facets);
-		fProject.commitChanges(monitor);
-		checkMetaInf(fProject.getProject());
-	}
 		
+	@Before
+	public void cleanUpWorkspace() throws Exception {
+		deleteAllProjects();
+		waitOnJobs();
+	}
+	
+	@After
+	public void waitJobs() throws Exception {
+		// Wait for all validation jobs to end before ending test....
+		waitOnJobs();
+	}
+
 	@Test
 	public void convertSimpleProject() throws Exception {
 		IProject simpleProject = importProjectInWorkspace(SIMPLE_PRJ_LOCATION, SIMPLE_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{simpleProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(simpleProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(simpleProject);
 		
     	checkSimpleProject(SIMPLE_PRJ_NAME, "TestSimple", null, "1.0.0.qualifier", description);
 	}
@@ -132,22 +121,19 @@ public class WabConversionTest {
 		IProject javaProject = importProjectInWorkspace(JAVA_PRJ_LOCATION, JAVA_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{javaProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(javaProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(javaProject);
 		
     	checkJavaProject(javaProject, JAVA_PRJ_NAME, "TestJava", null, "1.0.0.qualifier", new String[] {"javapack", "javapack1"}, description);
 	}
-	
+
 	@Test
 	public void convertJavaProjectCustomHeaders() throws Exception {
-
 		IProject javaProject = importProjectInWorkspace(JAVA_PRJ_COPY_LOCATION, JAVA_PRJ_COPY_NAME);
     	OSGiBundleFacetInstallConfig osgiBundleFacetInstallConfig = setupOSGiBundleFacetInstallConfig("customSymbolicName", "CustomBundleName", "customVendor", "1.0.1.qualifier");
 		IFacetedProject fproj = ProjectFacetsManager.create(javaProject, true, monitor);
-		fproj.installProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
+		fproj.installProjectFacet(OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(javaProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(javaProject);
 		
     	checkJavaProject(javaProject, "customSymbolicName", "CustomBundleName", "customVendor", "1.0.1.qualifier", new String[] {"javapack", "javapack1"}, description);
 	}
@@ -157,8 +143,7 @@ public class WabConversionTest {
 		IProject pluginProject = importProjectInWorkspace(PLUGIN_PRJ_LOCATION, PLUGIN_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{pluginProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(pluginProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(pluginProject);
 		
     	checkJavaProject(pluginProject, PLUGIN_PRJ_NAME, "TestPlugin", null, "1.0.0.qualifier", new String[] {"javapack", "javapack1", "testplugin"}, description);
 
@@ -177,8 +162,7 @@ public class WabConversionTest {
 		IProject pluginProject = importProjectInWorkspace(PLUGIN_PRJ_CUSTOM_HEADERS_LOCATION, PLUGIN_PRJ_CUSTOM_HEADERS_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{pluginProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(pluginProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(pluginProject);
 
     	IPackageImportDescription[] packageImports = description.getPackageImports();
     	Assert.assertNotNull(packageImports);
@@ -197,8 +181,7 @@ public class WabConversionTest {
 		IProject webProject = importProjectInWorkspace(WEB_PRJ_LOCATION, WEB_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{webProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(webProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(webProject);
 		
     	checkWebProject(webProject, WEB_PRJ_NAME, "TestWeb", null, "1.0.0.qualifier", new String[] {"test", "test1"}, "/" + WEB_PRJ_NAME, description);
 	}
@@ -209,8 +192,7 @@ public class WabConversionTest {
 		IProject jpaProject = importProjectInWorkspace(JPA_PRJ_LOCATION, JPA_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{jpaProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(jpaProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(jpaProject);
 		
     	checkJPAProject(jpaProject, JPA_PRJ_NAME, "TestJPA", null, "1.0.0.qualifier", new String[] {"test"}, description);
 	}
@@ -220,8 +202,7 @@ public class WabConversionTest {
 		IProject jpaProject = importProjectInWorkspace(JPA_UTILITY_PRJ_LOCATION, JPA_UTILITY_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{jpaProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(jpaProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(jpaProject);
 		
     	checkJPAProject(jpaProject, JPA_UTILITY_PRJ_NAME, "TestJPAwithUtility", null, "1.0.0.qualifier", new String[] {"test"}, description);
 	}
@@ -232,10 +213,9 @@ public class WabConversionTest {
 		
     	OSGiBundleFacetInstallConfig osgiBundleFacetInstallConfig = setupOSGiBundleFacetInstallConfig("customSymbolicName", "CustomBundleName", "customVendor", "1.0.1.qualifier");
 		IFacetedProject fproj = ProjectFacetsManager.create(webProject, true, monitor);
-		fproj.installProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
+		fproj.installProjectFacet(OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription description = bundleProjectService.getDescription(webProject);
+    	IBundleProjectDescription description = getBundleProjectDescription(webProject);
 		
     	checkWebProject(webProject, "customSymbolicName", "CustomBundleName", "customVendor", "1.0.1.qualifier", new String[] {"test", "test1"}, "/customWebContext", description);
 	}
@@ -246,9 +226,8 @@ public class WabConversionTest {
 		IProject javaProject = importProjectInWorkspace(JAVA_REFERRED_PRJ_LOCATION, JAVA_REFERRED_PRJ_NAME);
     	new ConvertProjectsToBundlesOperation(new IProject[]{webProject, javaProject}).run(monitor);
     	
-    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-    	IBundleProjectDescription webPrjDescription = bundleProjectService.getDescription(webProject);
-    	IBundleProjectDescription javaPrjDescription = bundleProjectService.getDescription(javaProject);
+    	IBundleProjectDescription webPrjDescription = getBundleProjectDescription(webProject);
+    	IBundleProjectDescription javaPrjDescription = getBundleProjectDescription(javaProject);
 		
     	checkWebProject(webProject, WEB_REFERRING_JAVA_PRJ_NAME, "TestWebReferringJava", null, "1.0.0.qualifier", new String[] {"test", "test1"}, "/" + WEB_REFERRING_JAVA_PRJ_NAME, webPrjDescription);
     	checkJavaProject(javaProject, JAVA_REFERRED_PRJ_NAME, "TestJavaReferred", null, "1.0.0.qualifier", new String[] {"javapack", "javapack1"}, javaPrjDescription);
@@ -273,12 +252,12 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(webProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
-		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(webProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		Assert.assertFalse(hasBuildSpec(webProject, PDE.MANIFEST_BUILDER_ID));
 		Assert.assertFalse(hasBuildSpec(webProject, PDE.SCHEMA_BUILDER_ID));
 		Assert.assertFalse(hasPluginDependenciesCP(webProject));
-		IFile buildPropertiesFile = webProject.getFile("WebContent/" + OSGiBundleFacetUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = webProject.getFile("WebContent/" + BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
 
@@ -288,12 +267,12 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(javaProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
-		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(javaProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		Assert.assertFalse(hasBuildSpec(javaProject, PDE.MANIFEST_BUILDER_ID));
 		Assert.assertFalse(hasBuildSpec(javaProject, PDE.SCHEMA_BUILDER_ID));
 		Assert.assertFalse(hasPluginDependenciesCP(javaProject));
-		IFile buildPropertiesFile = javaProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = javaProject.getFile(BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
 
@@ -303,10 +282,10 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(pluginProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_ONLY);
-		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertTrue(pluginProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		Assert.assertTrue(hasPluginDependenciesCP(pluginProject));
-		IFile buildPropertiesFile = pluginProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = pluginProject.getFile(BUILD_PROPERTIES);
 		Assert.assertTrue(buildPropertiesFile.exists());
 	}
 	
@@ -316,14 +295,33 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(simpleProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
-		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(simpleProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		Assert.assertFalse(hasBuildSpec(simpleProject, PDE.MANIFEST_BUILDER_ID));
 		Assert.assertFalse(hasBuildSpec(simpleProject, PDE.SCHEMA_BUILDER_ID));
-		IFile buildPropertiesFile = simpleProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = simpleProject.getFile(BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
+
+	@Test
+	public void createJPAProject() throws Exception {     
+		IFacetedProjectWorkingCopy fProject = FacetedProjectFramework.createNewProject();
+		fProject.setProjectName(JPA_CREATE_PRJ_NAME);
+		HashSet<IProjectFacetVersion> facets = getFacets(new String[] {"java", "jpt.jpa", "osgi.bundle"});
+		fProject.setProjectFacets(facets);
+		fProject.commitChanges(monitor);
+		checkMetaInf(fProject.getProject());
+	}
 	
+	@Test
+	public void createJPAUtilityProject() throws Exception {     
+		IFacetedProjectWorkingCopy fProject = FacetedProjectFramework.createNewProject();
+		fProject.setProjectName(JPA_UTILITY_CREATE_PRJ_NAME);
+		HashSet<IProjectFacetVersion> facets = getFacets(new String[] {"java", "jpt.jpa", "jst.utility", "osgi.bundle"});
+		fProject.setProjectFacets(facets);
+		fProject.commitChanges(monitor);
+		checkMetaInf(fProject.getProject());
+	}
 	
 	private void checkWebProject(IProject project, String expectedSymbolicName, String expectedBundleName, String expectedVendor, String expectedVersion, String[] expectedPackageExports, String expectedWebContextPath, IBundleProjectDescription description) throws JavaModelException {
 		checkJavaProject(project, expectedSymbolicName, expectedBundleName, expectedVendor, expectedVersion, expectedPackageExports, description);
