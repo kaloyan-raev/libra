@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.libra.facet.ui.wizards;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isOSGiBundle;
+
 import java.util.Arrays;
 
 import org.eclipse.core.databinding.DataBindingContext;
@@ -31,7 +33,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.libra.facet.OSGiBundleFacetUtils;
+import org.eclipse.libra.facet.internal.ui.LibraFacetUIPlugin;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -70,12 +72,13 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 						try {
 							if (refProject != null && 
 									refProject != project && 
-									!OSGiBundleFacetUtils.isOSGiBundle(refProject) && 
+									!isOSGiBundle(refProject) && 
 									!fSelected.contains(refProject)) {
 								return true;
 							}
 						} catch (CoreException e) {
-							// do nothing
+							LibraFacetUIPlugin.logError(e);
+							// do nothing - check the next reference
 						}
 					}
 				}
@@ -182,11 +185,12 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 				for (IVirtualReference ref : references) {
 					IProject refProject = ref.getReferencedComponent().getProject();
 					try {
-						if (refProject != null && refProject != project && !OSGiBundleFacetUtils.isOSGiBundle(refProject)) {
+						if (refProject != null && refProject != project && !isOSGiBundle(refProject)) {
 							fSelected.add(refProject);
 						}
 					} catch (CoreException e) {
-						// do nothing
+						LibraFacetUIPlugin.logError(e);
+						// do nothing - check the next reference
 					}
 				}
 			}

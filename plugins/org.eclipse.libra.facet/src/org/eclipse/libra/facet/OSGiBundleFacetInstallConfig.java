@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.wst.common.project.facet.core.ActionConfig;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
@@ -190,9 +189,8 @@ public class OSGiBundleFacetInstallConfig extends ActionConfig implements IFacet
 			return null;
 		
 		IProject project = fproj.getProject(); 
-		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 		try {
-			return bundleProjectService.getDescription(project);
+			return OSGiBundleFacetUtils.getBundleProjectDescription(project);
 		} catch (CoreException e) {
 			return null;
 		}

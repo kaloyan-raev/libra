@@ -16,8 +16,8 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.libra.facet.Activator;
 import org.eclipse.libra.facet.OSGiBundleFacetInstallConfig;
+import org.eclipse.libra.facet.internal.ui.LibraFacetUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -38,7 +38,7 @@ public class OSGiBundleFacetInstallPage extends AbstractFacetWizardPage {
         
         setTitle(Messages.OSGiBundleFacetInstallPage_Title);
         setDescription(Messages.OSGiBundleFacetInstallPage_Description);
-        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, IMG_PATH_BUNDLE_WIZBAN));
+        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(LibraFacetUIPlugin.PLUGIN_ID, IMG_PATH_BUNDLE_WIZBAN));
 	}
 
 	public void setConfig(Object config) {

@@ -15,6 +15,7 @@
 		<dtp-site>http://download.eclipse.org/datatools/updates/</dtp-site>
 		<wtp-site>http://download.eclipse.org/webtools/repository/indigo/</wtp-site>
 		<gef-site>http://download.eclipse.org/tools/gef/updates/releases</gef-site>
+		<wtp-tests-site>http://download.eclipse.org/webtools/downloads/drops/R3.3.0/R-3.3.0-20110607160810/repositoryunittests/</wtp-tests-site>
 	</properties>
 
 	<modules>
@@ -134,6 +135,14 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>org.eclipse.dash.maven</groupId>
+					<artifactId>eclipse-maven-signing-plugin</artifactId>
+					<!-- TODO: need 1.0.1.2-SNAPSHOT of the signing plugin until bugfix 
+						for https://bugs.eclipse.org/bugs/show_bug.cgi?id=347591 is available in 
+						maven.eclipse.org -->
+					<version>1.0.1.2-SNAPSHOT</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -162,6 +171,11 @@
 		<repository>
 			<id>gef-sdk</id>
 			<url>${gef-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>wtp-sdk-tests</id>
+			<url>${wtp-tests-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

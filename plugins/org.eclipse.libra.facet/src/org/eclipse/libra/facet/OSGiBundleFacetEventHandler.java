@@ -13,6 +13,7 @@ package org.eclipse.libra.facet;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_PERSISTENCE_PACKAGE;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JPA_FACET;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.META_PERSISTENCE_HEADER;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isOSGiBundle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.libra.facet.internal.LibraFacetPlugin;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageImportDescription;
@@ -32,8 +34,8 @@ public class OSGiBundleFacetEventHandler implements IDelegate {
 	public void execute(IProject project, IProjectFacetVersion fv,
 			Object config, IProgressMonitor monitor) throws CoreException {
 		
-		if (JPA_FACET.equals(fv.getProjectFacet().getId()) && OSGiBundleFacetUtils.isOSGiBundle(project)) {
-			IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
+		if (JPA_FACET.equals(fv.getProjectFacet().getId()) && isOSGiBundle(project)) {
+			IBundleProjectService bundleProjectService = LibraFacetPlugin.getDefault().getBundleProjectService();
 			IBundleProjectDescription bundleProjectDescription = bundleProjectService.getDescription(project);
 			
 			// add the Meta-Persistence manifest header, if it already exists - keep its value

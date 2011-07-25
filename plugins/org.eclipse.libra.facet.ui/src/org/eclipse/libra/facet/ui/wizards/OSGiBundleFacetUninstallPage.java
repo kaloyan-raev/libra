@@ -15,9 +15,9 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.libra.facet.Activator;
 import org.eclipse.libra.facet.OSGiBundleFacetUninstallConfig;
 import org.eclipse.libra.facet.OSGiBundleFacetUninstallStrategy;
+import org.eclipse.libra.facet.internal.ui.LibraFacetUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -26,8 +26,8 @@ import org.eclipse.wst.common.project.facet.ui.AbstractFacetWizardPage;
 
 
 public class OSGiBundleFacetUninstallPage extends AbstractFacetWizardPage {
-	
-	private static final String WIZARD_PAGE_NAME = "osgi.bundle.facet.install.page"; //$NON-NLS-1$
+
+	private static final String WIZARD_PAGE_NAME = "osgi.bundle.facet.uninstall.page"; //$NON-NLS-1$
 	private static final String IMG_PATH_BUNDLE_WIZBAN = "icons/wizban/bundle_wizban.png"; //$NON-NLS-1$
 	
 	private OSGiBundleFacetUninstallConfig config;
@@ -37,7 +37,7 @@ public class OSGiBundleFacetUninstallPage extends AbstractFacetWizardPage {
 
 		setTitle(Messages.OSGiBundleFacetUninstallPage_Title);
         setDescription(Messages.OSGiBundleFacetUninstallPage_Description);
-        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, IMG_PATH_BUNDLE_WIZBAN));
+        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(LibraFacetUIPlugin.PLUGIN_ID, IMG_PATH_BUNDLE_WIZBAN));
 	}
 
 	public void setConfig(Object config) {

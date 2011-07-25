@@ -10,6 +10,15 @@
  *******************************************************************************/
 package org.eclipse.libra.facet;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.BUILD_PROPERTIES;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.MANIFEST_BUILDER_ID;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.MANIFEST_URI;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.SCHEMA_BUILDER_ID;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.getBundleProjectDescription;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.hasRequiredPlugins;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isJavaProject;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isRequiredPlugins;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -23,7 +32,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
@@ -65,8 +73,8 @@ public class OSGiBundleFacetUninstallDelegate implements IDelegate {
 					System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
 					description.setNatureIds(newNatures);
 					// workaround - see bug 344720
-					removeFromBuildSpec(description, OSGiBundleFacetUtils.MANIFEST_BUILDER_ID);
-					removeFromBuildSpec(description, OSGiBundleFacetUtils.SCHEMA_BUILDER_ID);
+					removeFromBuildSpec(description, MANIFEST_BUILDER_ID);
+					removeFromBuildSpec(description, SCHEMA_BUILDER_ID);
 					// end of workaround
 					project.setDescription(description, IResource.KEEP_HISTORY, monitor);
 					return;
@@ -90,12 +98,12 @@ public class OSGiBundleFacetUninstallDelegate implements IDelegate {
 	}
 
 	private void removeRequiredBundlesClasspathContainer(IProject project, IProgressMonitor monitor) throws CoreException {
-		if (OSGiBundleFacetUtils.isJavaProject(project)) {
+		if (isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] entries = javaProject.getRawClasspath();
-			if (OSGiBundleFacetUtils.hasRequiredPlugins(entries)) {
+			if (hasRequiredPlugins(entries)) {
 				for (int i = 0; i < entries.length; i++) {
-					if (OSGiBundleFacetUtils.isRequiredPlugins(entries[i])) {
+					if (isRequiredPlugins(entries[i])) {
 						IClasspathEntry[] newEntries = new IClasspathEntry[entries.length - 1];
 						System.arraycopy(entries, 0, newEntries, 0, i);
 						System.arraycopy(entries, i + 1, newEntries, i, entries.length - i - 1);
@@ -108,12 +116,12 @@ public class OSGiBundleFacetUninstallDelegate implements IDelegate {
 	}
 
 	private void deleteBuildProperties(IProject project, IProgressMonitor monitor) throws CoreException {
-		IResource buildPropertiesFile = findResource(project, OSGiBundleFacetUtils.BUILD_PROPERTIES);
+		IResource buildPropertiesFile = findResource(project, BUILD_PROPERTIES);
 		buildPropertiesFile.delete(IResource.KEEP_HISTORY, monitor);
 	}
 	
 	private void cleanUpManifest(IProject project, IProgressMonitor monitor) throws CoreException {
-		IResource manifestFile = findResource(project, OSGiBundleFacetUtils.MANIFEST_URI);
+		IResource manifestFile = findResource(project, MANIFEST_URI);
 		manifestFile.delete(IResource.KEEP_HISTORY, monitor);
 		
 		// delete the META-INF folder if empty
@@ -124,8 +132,7 @@ public class OSGiBundleFacetUninstallDelegate implements IDelegate {
 	}
 	
 	private IResource findResource(IProject project, String memberURI) throws CoreException {
-		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-		IBundleProjectDescription bundleProjectDescription = bundleProjectService.getDescription(project);
+		IBundleProjectDescription bundleProjectDescription = getBundleProjectDescription(project);
 		IPath bundleRoot = bundleProjectDescription.getBundleRoot();
 		IPath memberPath = bundleRoot;
 		if (memberPath == null) {

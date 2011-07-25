@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.libra.facet.ui.operations;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.libra.facet.OSGiBundleFacetUtils;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -36,7 +37,7 @@ public class ConvertProjectToBundleOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
 		IFacetedProject fproj = ProjectFacetsManager.create(fProject, true, monitor);
-		fproj.installProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, null, monitor);
+		fproj.installProjectFacet(OSGI_BUNDLE_FACET_42, null, monitor);
 	}
 
 }
