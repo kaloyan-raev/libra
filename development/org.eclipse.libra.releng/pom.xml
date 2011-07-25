@@ -163,6 +163,10 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>maven.eclipse.org</id>
+			<url>http://maven.eclipse.org/nexus/content/groups/central/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>maven.eclipse.org</id>
 			<url>http://maven.eclipse.org/nexus/content/repositories/milestone-indigo</url>
 		</pluginRepository>
 		<!-- TODO: need 1.0.1.2-SNAPSHOT of the signing plugin until bugfix for 
