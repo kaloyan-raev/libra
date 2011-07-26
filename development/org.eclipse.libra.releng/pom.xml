@@ -15,6 +15,7 @@
 		<dtp-site>http://download.eclipse.org/datatools/updates/</dtp-site>
 		<wtp-site>http://download.eclipse.org/webtools/repository/indigo/</wtp-site>
 		<wtp-tests-site>http://download.eclipse.org/webtools/downloads/drops/R3.3.0/R-3.3.0-20110607160810/repositoryunittests/</wtp-tests-site>
+		<debug-options></debug-options> <!-- empty by default -->
 	</properties>
 
 	<modules>
@@ -31,6 +32,17 @@
 		<module>../../tests/org.eclipse.libra.facet.test</module>
 		<module>../../tests/org.eclipse.libra.warproducts.core.test</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>debug-tests</id>
+			<properties>
+				<debug-port>5589</debug-port>
+				<debug-suspend>n</debug-suspend>
+				<debug-options>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=${debug-suspend},address=${debug-port}</debug-options>
+			</properties>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
@@ -71,6 +83,25 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<useUIHarness>true</useUIHarness>
+						<useUIThread>true</useUIThread>
+						<argLine>-Xms128m -Xmx512m -XX:MaxPermSize=256m ${debug-options}</argLine>
+						<product>org.eclipse.sdk.ide</product>
+						<application>org.eclipse.ui.ide.workbench</application>
+						<dependencies>
+							<dependency>
+								<type>p2-installable-unit</type>
+								<artifactId>org.eclipse.sdk.ide</artifactId>
+								<version>0.0.0</version>
+							</dependency>
+						</dependencies>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
