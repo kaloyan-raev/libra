@@ -40,11 +40,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.wst.common.project.facet.core.FacetedProjectFramework;
+import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,19 +60,21 @@ public class WebContextRootSynchronizerTest {
 	
 	private static final String APPEND = "Changed";	
 	
-	private static final String WAB_PRJ_LOCATION = "resources/TestWAB.zip_";
-	private static final String WAB_PRJ_NAME = "TestWAB";
-	private static final String CHANGED_WEB_CONTEXT_ROOT = '/' + WAB_PRJ_NAME + APPEND;
-	
 	private static int MAX_ATTEMPTS = 20;
 	
+	private String expectedWebContextRoot;
 	private IProject wabProject;
 	
 	@Before
 	public void importProject() throws Exception {
+		// clean up the workspace
 		deleteAllProjects();
 		waitOnJobs();
-		wabProject = importProjectInWorkspace(WAB_PRJ_LOCATION, WAB_PRJ_NAME);
+		// create new WAB project
+		String projectName = "TestWAB" + System.currentTimeMillis();
+		expectedWebContextRoot = '/' + projectName + APPEND;
+		wabProject = createWabProject(projectName);
+		waitOnJobs();
 	}
 	
 	@After
@@ -85,28 +87,28 @@ public class WebContextRootSynchronizerTest {
 	public void testPDEChangeLeadsToWTPChange() throws Exception {		
     	String newPDEWebContextPath = getContextRootFromPDEModel(wabProject) + APPEND;
     	setContextRootInPDEModel(wabProject, newPDEWebContextPath, null);
-    	checkModels(wabProject, CHANGED_WEB_CONTEXT_ROOT);
+    	checkModels(wabProject, expectedWebContextRoot);
 	}
 	
 	@Test
 	public void testWTPChangeLeadsToPDEChange() throws Exception {
     	String newWTPWebContextPath = getContextRootFromWTPModel(wabProject) + APPEND;
     	setContextRootInWTPModel(wabProject, newWTPWebContextPath);        	
-    	checkModels(wabProject, CHANGED_WEB_CONTEXT_ROOT);
+    	checkModels(wabProject, expectedWebContextRoot);
 	}
 	
 	@Test
 	public void testSettingsFileChangeLeadsToModelChange() throws Exception {
 		String newWTPWebContextPath = getContextRootFromWTPModel(wabProject) + APPEND;
 		setWebContextRootInSettings(wabProject, newWTPWebContextPath);
-		checkModels(wabProject, CHANGED_WEB_CONTEXT_ROOT);
+		checkModels(wabProject, expectedWebContextRoot);
 	}
 	
 	@Test
 	public void testManifetsFileChangeLeadsToModelChange() throws Exception {
 		String newPDEWebContextPath = getContextRootFromPDEModel(wabProject) + APPEND;
 		setWebContextRootInManifest(wabProject, newPDEWebContextPath);
-	    checkModels(wabProject, CHANGED_WEB_CONTEXT_ROOT);
+	    checkModels(wabProject, expectedWebContextRoot);
 	} 
 	
 	@Test
@@ -124,13 +126,12 @@ public class WebContextRootSynchronizerTest {
 	
 	// ------------------------------ private helper methods ----------------------------------------------
 	
-	private IProject importProjectInWorkspace(String projectZipLocation, String projectName) throws IOException, CoreException{
-		String userDir = System.getProperty("user.dir");
-		String localZipPath = userDir + IPath.SEPARATOR + projectZipLocation;
-		org.eclipse.etools.common.test.apitools.ProjectUnzipUtil util = new org.eclipse.etools.common.test.apitools.ProjectUnzipUtil(new Path(localZipPath), new String[] {projectName});
-		Assert.assertTrue(util.createProjects());
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		return project;
+	private IProject createWabProject(String projectName) throws CoreException {
+		IFacetedProjectWorkingCopy wc = FacetedProjectFramework.createNewProject();
+		wc.setProjectName(projectName);
+		wc.setSelectedPreset("osgi.web.bundle.preset");
+		wc.commitChanges(null);
+		return wc.getProject();
 	}
 	
 	private boolean areModelsEqualToTheExpectedValue(IProject project, String expectedWebContextRoot) throws CoreException {
