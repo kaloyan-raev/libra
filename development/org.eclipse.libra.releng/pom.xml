@@ -214,8 +214,8 @@
 			<url>http://maven.eclipse.org/nexus/content/groups/central/</url>
 		</pluginRepository>
 		<pluginRepository>
-			<id>maven-eclipse-milestone-indigo</id>
-			<url>http://maven.eclipse.org/nexus/content/repositories/public/</url>
+			<id>maven-eclipse-public</id>
+			<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
