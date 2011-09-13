@@ -12,5 +12,6 @@
 	<artifactId>org.eclipse.libra.warproducts.feature.source</artifactId>
 	<packaging>eclipse-feature</packaging>
 	<name>WAR Products SDK Feature</name>
+	<version>0.1.1-SNAPSHOT</version>
 	
 </project>
