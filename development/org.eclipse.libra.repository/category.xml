@@ -3,13 +3,13 @@
    <feature url="features/org.eclipse.libra.facet.feature_0.1.1.qualifier.jar" id="org.eclipse.libra.facet.feature" version="0.1.1.qualifier">
       <category name="libra"/>
    </feature>
-   <feature url="features/org.eclipse.libra.warproducts.feature_0.1.0.qualifier.jar" id="org.eclipse.libra.warproducts.feature" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.libra.warproducts.feature_0.1.1.qualifier.jar" id="org.eclipse.libra.warproducts.feature" version="0.1.1.qualifier">
       <category name="libra"/>
    </feature>
    <feature url="features/org.eclipse.libra.facet.feature.source_0.1.1.qualifier.jar" id="org.eclipse.libra.facet.feature.source" version="0.1.1.qualifier">
       <category name="libra-sdk"/>
    </feature>
-   <feature url="features/org.eclipse.libra.warproducts.feature.source_0.1.0.qualifier.jar" id="org.eclipse.libra.warproducts.feature.source" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.libra.warproducts.feature.source_0.1.1.qualifier.jar" id="org.eclipse.libra.warproducts.feature.source" version="0.1.1.qualifier">
       <category name="libra-sdk"/>
    </feature>
    <feature url="features/org.eclipse.libra.framework.feature_0.1.0.qualifier.jar" id="org.eclipse.libra.framework.feature" version="0.1.0.qualifier">
