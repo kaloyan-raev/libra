@@ -24,8 +24,8 @@ import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.runtime.internal.ui.AbstractBundleEditorPage;
-import org.eclipse.virgo.ide.runtime.internal.ui.ServerUiImages;
 import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
+import org.eclipse.wst.server.ui.ServerUICore;
 import org.eclipse.wst.server.ui.internal.editor.ServerEditorPartInput;
 import org.eclipse.wst.server.ui.internal.editor.ServerResourceCommandManager;
 
@@ -53,7 +53,7 @@ public class BundleInformationEditorPage extends AbstractBundleEditorPage {
 		sform.getForm().setText("Bundle Information");
 		sform.setExpandHorizontal(true);
 		sform.setExpandVertical(true);
-		sform.setImage(ServerUiImages.getImage(ServerUiImages.IMG_OBJ_SPRINGSOURCE));
+		sform.setImage(ServerUICore.getLabelProvider().getImage(getServer()));
 		toolkit.decorateFormHeading(sform.getForm());
 
 		masterDetailsBlock = new BundleInformationMasterDetailsBlock(this, commandManager.getServerEditor(),

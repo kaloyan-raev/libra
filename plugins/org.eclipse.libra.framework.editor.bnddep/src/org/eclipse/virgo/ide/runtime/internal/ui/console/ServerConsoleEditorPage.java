@@ -35,8 +35,8 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.internal.browser.ImageResource;
 import org.eclipse.virgo.ide.runtime.internal.ui.AbstractBundleEditorPage;
 import org.eclipse.virgo.ide.runtime.internal.ui.SearchTextHistory;
-import org.eclipse.virgo.ide.runtime.internal.ui.ServerUiImages;
 import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
+import org.eclipse.wst.server.ui.ServerUICore;
 
 
 /**
@@ -65,7 +65,7 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 		sform = mform.getForm();
 		FormToolkit toolkit = mform.getToolkit();
 		sform.setText("Server Console");
-		sform.setImage(ServerUiImages.getImage(ServerUiImages.IMG_OBJ_SPRINGSOURCE));
+		sform.setImage(ServerUICore.getLabelProvider().getImage(getServer()));
 		sform.setExpandHorizontal(true);
 		sform.setExpandVertical(true);
 		toolkit.decorateFormHeading(sform.getForm());
