@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009, 2011 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.virgo.ide.runtime.internal.ui.dependencies;
 
@@ -80,6 +81,7 @@ import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 @SuppressWarnings("restriction")
 public class BundleDependencyEditorPage extends AbstractBundleEditorPage implements IZoomableWorkbenchPart {
