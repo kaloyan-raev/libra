@@ -15,13 +15,13 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.virgo.ide.management.remote.Bundle;
-import org.eclipse.virgo.ide.runtime.internal.ui.ServerUiImages;
 import org.eclipse.virgo.ide.runtime.internal.ui.model.BundleDependency;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
@@ -122,7 +122,7 @@ public class BundleDependencyLabelProvider implements ILabelProvider, IEntitySty
 
 	public Image getImage(Object element) {
 		if (element instanceof Bundle) {
-			return ServerUiImages.getImage(ServerUiImages.IMG_OBJ_BUNDLE);
+			return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 		}
 		return null;
 	}

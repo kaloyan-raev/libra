@@ -15,8 +15,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
@@ -68,9 +68,7 @@ import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.management.remote.PackageExport;
 import org.eclipse.virgo.ide.management.remote.PackageImport;
 import org.eclipse.virgo.ide.management.remote.ServiceReference;
-import org.eclipse.virgo.ide.runtime.internal.ui.ServerUiImages;
 import org.eclipse.virgo.ide.runtime.internal.ui.overview.BundleInformationDetailsPart.ServicesContentProvider.ServicesHolder;
-import org.eclipse.virgo.ide.ui.editors.BundleManifestEditor;
 import org.osgi.framework.Constants;
 import org.springframework.util.StringUtils;
 
@@ -176,13 +174,13 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof PackageImport) {
-				return PDEPluginImages.DESC_PACKAGE_OBJ.createImage();
+				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE);
 			}
 			else if (element instanceof PackageExport) {
-				return PDEPluginImages.DESC_PACKAGE_OBJ.createImage();
+				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE);
 			}
 			else if (element instanceof Bundle) {
-				return ServerUiImages.getImage(ServerUiImages.IMG_OBJ_BUNDLE);
+				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 			}
 			return super.getImage(element);
 		}
@@ -346,7 +344,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 				return PDEPluginImages.DESC_EXTENSIONS_OBJ.createImage();
 			}
 			else if (element instanceof Bundle) {
-				return ServerUiImages.getImage(ServerUiImages.IMG_OBJ_BUNDLE);
+				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 			}
 			return super.getImage(element);
 		}
