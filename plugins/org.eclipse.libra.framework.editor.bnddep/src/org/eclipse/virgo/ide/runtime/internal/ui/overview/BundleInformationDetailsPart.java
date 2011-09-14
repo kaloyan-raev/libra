@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -338,10 +339,10 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ServiceReference) {
-				return PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
 			}
 			else if (element instanceof ServicesHolder) {
-				return PDEPluginImages.DESC_EXTENSIONS_OBJ.createImage();
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
 			}
 			else if (element instanceof Bundle) {
 				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);

@@ -11,9 +11,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.zest.layouts,
  org.eclipse.debug.core,
  org.eclipse.wst.server.core,
- org.eclipse.wst.server.ui
+ org.eclipse.wst.server.ui,
+ org.eclipse.pde.ui
 Import-Package: org.eclipse.mylyn.internal.provisional.commons.ui,
- org.eclipse.pde.internal.ui,
  org.eclipse.ui.internal.browser,
  org.eclipse.ui.internal.ide,
  org.springframework.util;version="3.0.5.RELEASE"
