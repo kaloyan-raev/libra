@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -279,7 +278,7 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 		backAction.setEnabled(false);
 		toolBarManager.add(backAction);
 
-		forwardAction = new Action("Forward", CommonImages.EXPAND_ALL) {
+		forwardAction = new Action("Forward") {
 			@Override
 			public void run() {
 				searchControl.getSearchText().setText(history.forward());
@@ -295,7 +294,7 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 		forwardAction.setEnabled(false);
 		toolBarManager.add(forwardAction);
 
-		refreshAction = new Action("Refresh from server", CommonImages.REFRESH) {
+		refreshAction = new Action("Refresh from server", ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_REFRESH)) {
 
 			@Override
 			public void run() {

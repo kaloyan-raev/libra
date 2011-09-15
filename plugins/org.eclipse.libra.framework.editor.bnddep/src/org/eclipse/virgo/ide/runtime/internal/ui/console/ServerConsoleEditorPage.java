@@ -15,7 +15,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
@@ -194,7 +193,7 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 		backAction.setEnabled(false);
 		toolBarManager.add(backAction);
 
-		forwardAction = new Action("Forward", CommonImages.EXPAND_ALL) {
+		forwardAction = new Action("Forward") {
 			@Override
 			public void run() {
 				commandText.setText(history.forward());
@@ -215,7 +214,7 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 		forwardAction.setEnabled(false);
 		toolBarManager.add(forwardAction);
 
-		refreshAction = new Action("Refresh from server", CommonImages.REFRESH) {
+		refreshAction = new Action("Refresh from server", ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_REFRESH)) {
 
 			@Override
 			public void run() {

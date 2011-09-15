@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -62,6 +61,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.internal.browser.ImageResource;
 import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
@@ -295,7 +295,7 @@ public class BundleInformationMasterPart extends SectionPart {
 			}
 		});
 
-		toolBarManager.add(new Action("Refresh", CommonImages.REFRESH) {
+		toolBarManager.add(new Action("Refresh", ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_REFRESH)) {
 
 			@Override
 			public void run() {

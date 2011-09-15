@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -35,7 +36,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
@@ -57,6 +57,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.AbstractFormPart;
@@ -426,7 +428,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		detailsSection.setDescription("Details about the selected bundle.");
 		detailsSection.setLayoutData(data);
 		createSectionToolbar(detailsSection, toolkit, new Action("Show dependency graph for bundle",
-				CommonImages.GROUPING) {
+				PDEPluginImages.DESC_COMGROUP_OBJ) {
 			@Override
 			public void run() {
 				masterDetailsBlock.openDependencyPage(bundle.getSymbolicName(), bundle.getVersion());
@@ -561,7 +563,8 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		importsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		toolkit.paintBordersFor(importsComposite);
 		importsSection.setClient(importsComposite);
-		createSectionToolbar(importsSection, toolkit, new Action("Collapse All", CommonImages.COLLAPSE_ALL) {
+		ImageDescriptor collapseAllImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL);
+		createSectionToolbar(importsSection, toolkit, new Action("Collapse All", collapseAllImageDescriptor) {
 			@Override
 			public void run() {
 				importsTableViewer.collapseAll();
@@ -592,7 +595,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		exportsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		toolkit.paintBordersFor(exportsComposite);
 		exportsSection.setClient(exportsComposite);
-		createSectionToolbar(exportsSection, toolkit, new Action("Collapse All", CommonImages.COLLAPSE_ALL) {
+		createSectionToolbar(exportsSection, toolkit, new Action("Collapse All", collapseAllImageDescriptor) {
 			@Override
 			public void run() {
 				exportsTableViewer.collapseAll();
@@ -623,7 +626,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		servicesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		toolkit.paintBordersFor(servicesComposite);
 		servicesSection.setClient(servicesComposite);
-		createSectionToolbar(servicesSection, toolkit, new Action("Collapse All", CommonImages.COLLAPSE_ALL) {
+		createSectionToolbar(servicesSection, toolkit, new Action("Collapse All", collapseAllImageDescriptor) {
 			@Override
 			public void run() {
 				servicesTableViewer.collapseAll();
