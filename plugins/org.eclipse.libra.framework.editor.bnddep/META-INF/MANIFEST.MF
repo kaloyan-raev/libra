@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.core,
  org.eclipse.wst.server.core,
  org.eclipse.wst.server.ui,
- org.eclipse.pde.ui
+ org.eclipse.pde.ui,
+ org.eclipse.core.filesystem,
+ org.eclipse.ui.ide
 Import-Package: org.eclipse.ui.internal.browser,
- org.eclipse.ui.internal.ide,
  org.springframework.util;version="3.0.5.RELEASE"

@@ -12,13 +12,20 @@
 package org.eclipse.virgo.ide.runtime.internal.ui.overview;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.zip.ZipFile;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -38,6 +45,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
+import org.eclipse.pde.internal.ui.editor.JarEntryFile;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -57,7 +66,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -68,6 +80,7 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.management.remote.PackageExport;
 import org.eclipse.virgo.ide.management.remote.PackageImport;
@@ -514,12 +527,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 				PDEPluginImages.DESC_TOC_LEAFTOPIC_OBJ) {
 			@Override
 			public void run() {
-				try {
-					File file = new File(new URI(bundle.getLocation()));
-					BundleManifestEditor.openExternalPlugin(file, "META-INF/MANIFEST.MF");
-				}
-				catch (URISyntaxException e) {
-				}
+				openBundleEditor(bundle);
 			}
 		});
 
@@ -540,12 +548,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		openManifestText.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					File file = new File(new URI(bundle.getLocation()));
-					BundleManifestEditor.openExternalPlugin(file, "META-INF/MANIFEST.MF");
-				}
-				catch (URISyntaxException e1) {
-				}
+				openBundleEditor(bundle);
 			}
 		});
 
@@ -731,4 +734,62 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 		section.setTextClient(toolbar);
 	}
+	
+
+	
+	private void openBundleEditor(Bundle bundle) {
+		try {
+			String fileName = "META-INF/MANIFEST.MF";
+			File bundleRoot = new File(new URI(bundle.getLocation()));
+			IEditorInput input = getEditorInput(bundleRoot, fileName);
+			IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(fileName, getContentType());
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(); 
+			page.openEditor(input, desc.getId());
+		} catch (Exception e) {
+			// TODO improve logging
+			e.printStackTrace();
+		}
+	}
+	
+	private IEditorInput getEditorInput(File bundleRoot, String filename) {
+		IEditorInput input = null;
+		if (bundleRoot.isFile()) {
+			try {
+				ZipFile zipFile = new ZipFile(bundleRoot);
+				if (zipFile.getEntry(filename) != null) {
+					input = new JarEntryEditorInput(new JarEntryFile(zipFile, filename));
+				}
+			}
+			catch (IOException e) {
+			}
+		}
+		else {
+			File file = new File(bundleRoot, filename);
+			if (file.exists()) {
+				IFileStore store;
+				try {
+					store = EFS.getStore(file.toURI());
+					input = new FileStoreEditorInput(store);
+				}
+				catch (CoreException e) {
+				}
+			}
+		}
+		return input;
+	}
+	
+	private IContentType getContentType() {
+		// first check if an add-on (like Virgo Tooling) has registered a specialized content type
+		IContentType type = Platform.getContentTypeManager().findContentTypeFor("META-INF/MANIFEST.MF");
+		if (type == null) {
+			// then check if PDE is available
+			type = Platform.getContentTypeManager().getContentType("org.eclipse.pde.bundleManifest");
+		}
+		if (type == null) {
+			// in worst case use the default plain text content type
+			type = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+		}
+		return type;
+	}
+	
 }
