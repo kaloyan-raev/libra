@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,16 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.virgo.ide.runtime.internal.ui.model;
 
 import org.eclipse.virgo.ide.management.remote.Bundle;
-import org.springframework.util.ObjectUtils;
 
 
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 public abstract class BundleDependency {
 
@@ -53,10 +54,16 @@ public abstract class BundleDependency {
 			return false;
 		}
 		BundleDependency that = (BundleDependency) other;
-		if (!ObjectUtils.nullSafeEquals(this.exportingBundle, that.exportingBundle)) {
+		if (this.exportingBundle != that.exportingBundle) {
 			return false;
 		}
-		if (!ObjectUtils.nullSafeEquals(this.importingBundle, that.importingBundle)) {
+		if (this.exportingBundle != null && !this.exportingBundle.equals(that.exportingBundle)) {
+			return false;
+		}
+		if (this.importingBundle != that.importingBundle) {
+			return false;
+		}
+		if (this.importingBundle != null && !this.importingBundle.equals(that.importingBundle)) {
 			return false;
 		}
 		return true;

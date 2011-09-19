@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.virgo.ide.management.remote;
 
@@ -16,11 +17,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.util.ObjectUtils;
-
-
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 public class Bundle implements Serializable {
 
@@ -131,10 +130,19 @@ public class Bundle implements Serializable {
 			return false;
 		}
 		Bundle that = (Bundle) other;
-		if (!ObjectUtils.nullSafeEquals(this.id, that.id))
+		if (this.id != that.id) {
 			return false;
-		if (!ObjectUtils.nullSafeEquals(this.symbolicName, that.symbolicName))
+		}
+		if (this.id != null && !this.id.equals(that.id)) {
 			return false;
+		}
+		if (this.symbolicName != that.symbolicName) {
+			return false;
+		}
+		if (this.symbolicName != null && !this.symbolicName.equals(that.symbolicName)) {
+			return false;
+		}
 		return true;
 	}
+	
 }

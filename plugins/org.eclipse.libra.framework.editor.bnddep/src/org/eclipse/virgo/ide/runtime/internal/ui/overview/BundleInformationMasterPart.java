@@ -65,7 +65,6 @@ import org.eclipse.ui.internal.browser.ImageResource;
 import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -169,7 +168,7 @@ public class BundleInformationMasterPart extends SectionPart {
 
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof Bundle && StringUtils.hasText(filterText.getText())
+				if (element instanceof Bundle && filterText.getText().length() > 0
 						&& !TYPE_FILTER_TEXT.equals(filterText.getText())) {
 					StringMatcher matcher = new StringMatcher(filterText.getText() + "*", true, false);
 					return (matcher.match(((Bundle) element).getSymbolicName()));

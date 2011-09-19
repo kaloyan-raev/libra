@@ -87,7 +87,6 @@ import org.eclipse.virgo.ide.management.remote.PackageImport;
 import org.eclipse.virgo.ide.management.remote.ServiceReference;
 import org.eclipse.virgo.ide.runtime.internal.ui.overview.BundleInformationDetailsPart.ServicesContentProvider.ServicesHolder;
 import org.osgi.framework.Constants;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -371,7 +370,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		public String getText(Object element) {
 			if (element instanceof ServiceReference) {
 				String id = ((ServiceReference) element).getProperties().get(Constants.SERVICE_ID);
-				if (StringUtils.hasText(id)) {
+				if (id.length() > 0) {
 					return ((ServiceReference) element).getClazzes()[0] + " (" + id + ")";
 				}
 				return ((ServiceReference) element).getClazzes()[0];

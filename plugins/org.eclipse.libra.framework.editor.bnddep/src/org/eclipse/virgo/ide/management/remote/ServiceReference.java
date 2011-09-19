@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,20 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.virgo.ide.management.remote;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.util.ObjectUtils;
-
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 public class ServiceReference implements Serializable {
 	
@@ -90,10 +91,15 @@ public class ServiceReference implements Serializable {
 			return false;
 		}
 		ServiceReference that = (ServiceReference) other;
-		if (!ObjectUtils.nullSafeEquals(this.clazzes, that.clazzes))
+		if (!Arrays.equals(this.clazzes, that.clazzes)) {
 			return false;
-		if (!ObjectUtils.nullSafeEquals(this.type, that.type))
+		}
+		if (this.type != that.type) {
 			return false;
+		}
+		if (this.type != null && !this.type.equals(that.type)) {
+			return false;
+		}
 		return true;
 	}
 }

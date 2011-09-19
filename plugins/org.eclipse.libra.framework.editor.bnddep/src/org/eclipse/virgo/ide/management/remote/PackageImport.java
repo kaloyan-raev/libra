@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,15 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.virgo.ide.management.remote;
 
 import java.io.Serializable;
 
-import org.springframework.util.ObjectUtils;
-
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 public class PackageImport implements Serializable {
 
@@ -63,12 +63,24 @@ public class PackageImport implements Serializable {
 			return false;
 		}
 		PackageImport that = (PackageImport) other;
-		if (!ObjectUtils.nullSafeEquals(this.name, that.name))
+		if (this.name != that.name) {
 			return false;
-		if (!ObjectUtils.nullSafeEquals(this.version, that.version))
+		}
+		if (this.name != null && !this.name.equals(that.name)) {
 			return false;
-		if (!ObjectUtils.nullSafeEquals(this.supplierId, that.supplierId))
+		}
+		if (this.version != that.version) {
 			return false;
+		}
+		if (this.version != null && !this.version.equals(that.version)) {
+			return false;
+		}
+		if (this.supplierId != that.supplierId) {
+			return false;
+		}
+		if (this.supplierId != null && !this.supplierId.equals(that.supplierId)) {
+			return false;
+		}
 		return true;
 	}
 	

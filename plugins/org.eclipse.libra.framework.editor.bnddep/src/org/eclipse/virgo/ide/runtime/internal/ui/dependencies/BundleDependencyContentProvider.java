@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.virgo.ide.runtime.internal.ui.dependencies;
 
@@ -32,11 +33,11 @@ import org.eclipse.virgo.ide.runtime.internal.ui.model.PackageBundleDependency;
 import org.eclipse.virgo.ide.runtime.internal.ui.model.ServiceReferenceBundleDependency;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IGraphContentProvider;
-import org.springframework.util.StringUtils;
 
 
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 @SuppressWarnings("restriction")
 public class BundleDependencyContentProvider implements IGraphContentProvider, ISelectionChangedListener {
@@ -102,7 +103,7 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 			dependenciesByBundle = new HashMap<Bundle, Set<BundleDependency>>();
 			Set<Bundle> bundles = new HashSet<Bundle>((Collection<Bundle>) input);
 			if (!"type filter text".equals(searchControl.getSearchText().getText())
-					&& StringUtils.hasText(searchControl.getSearchText().getText())) {
+					&& searchControl.getSearchText().getText().trim().length() > 0) {
 				String searchText = searchControl.getSearchText().getText().trim() + "*";
 				StringMatcher matcher = new StringMatcher(searchText, true, false);
 				for (Bundle dep : new HashSet<Bundle>(bundles)) {
@@ -181,7 +182,7 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 			}
 
 			if ("type filter text".equals(searchControl.getSearchText().getText())
-					|| !StringUtils.hasText(searchControl.getSearchText().getText())) {
+					|| searchControl.getSearchText().getText().trim().length() == 0) {
 				this.contentResult = null;
 			}
 
