@@ -15,7 +15,7 @@ import org.eclipse.libra.framework.core.OSGIFrameworkLocatorDelegate;
 public class JonasFrameworkInstanceLocator extends OSGIFrameworkLocatorDelegate {
 
 	protected static final String[] runtimeTypes = new String[] {
-	"org.eclipse.libra.framework.jonas.runtimeType"};
+	"org.eclipse.libra.framework.jonas"};
 	
 	public static String[] getRuntimeTypes() {
 			return runtimeTypes;

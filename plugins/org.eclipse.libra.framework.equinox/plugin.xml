@@ -23,9 +23,6 @@
             vendor="%osami"
             version="3.6"
             class="org.eclipse.libra.framework.equinox.EquinoxFramework">
-            <moduleType
-		         types="osami.bundle"
-		         versions="1.0"/>
 		    <moduleType
 		         types="osgi.bundle"
 		         versions="4.2"/>     
@@ -118,7 +115,7 @@
 
     <runtime-component-version
        type="org.eclipse.libra.framework.equinox.runtimeType"
-       version="3.6.x"/>
+       version="3.6"/>
 
     <adapter>
       <runtime-component
@@ -149,7 +146,7 @@
     <runtimeFacetMapping
       runtimeTypeId="org.eclipse.libra.framework.equinox.runtimeType.30x"
       runtime-component="org.eclipse.libra.framework.equinox.runtimeType"
-      version="3.6.x"/>
+      version="3.6"/>
   </extension>
 
   <extension point="org.eclipse.wst.server.core.installableRuntimes">

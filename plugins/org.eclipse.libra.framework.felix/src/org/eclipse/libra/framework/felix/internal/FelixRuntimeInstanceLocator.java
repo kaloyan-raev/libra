@@ -15,7 +15,7 @@ import org.eclipse.libra.framework.core.OSGIFrameworkLocatorDelegate;
 public class FelixRuntimeInstanceLocator extends OSGIFrameworkLocatorDelegate {
 
 	protected static final String[] runtimeTypes = new String[] {
-	"org.eclipse.libra.framework.felix.runtimeType.20x"};
+	"org.eclipse.libra.framework.felix"};
 	
 	public static String[] getRuntimeTypes() {
 			return runtimeTypes;

@@ -137,13 +137,13 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		} catch (IOException e) {
 			Trace.trace(Trace.SEVERE, "Could not set equinox VM arguments:"+e.getMessage(), e);
 		}
-		String vmArgs = "-Declipse.ignoreApp=true -Dosgi.noShutdown=true";
+		String vmArgs =""  ;
 		
 		//If there is a non-default java profile then set it.
 		if(javaProfileID != null && !javaProfileID.equals(IOSGIExecutionEnvironment.Default.toString()))
-			vmArgs += " -Dosgi.java.profile=file:"+profilePath; //$NON-NLS-1$ //$NON-NLS-2$
+			vmArgs += "-Dosgi.java.profile=file:"+profilePath; //$NON-NLS-1$ //$NON-NLS-2$
 
-		return new String[] { vmArgs };
+		return new String[] {"-Declipse.ignoreApp=true", "-Dosgi.noShutdown=true", vmArgs };
 	}
 
 	public IStatus canAddModule(IModule module) {
@@ -230,6 +230,8 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		for (int i = 0; i < krBundles.length; i++) {
 			String targetBundlePath = "reference:file:"+krBundles[i].getBundleInfo().getLocation().getRawPath();
 			if (targetBundlePath != null && !(targetBundlePath.trim().equalsIgnoreCase(""))) {
+				if (targetBundlePath.indexOf("org.eclipse.osgi_") > -1) 
+				  continue;
 				
 				File file = new File(targetBundlePath.substring(targetBundlePath.indexOf("/")));
 				if (file.isFile()) {
