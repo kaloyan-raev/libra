@@ -16,7 +16,7 @@
             id="org.eclipse.libra.framework.felix.runtimeType.20x"
             name="%runtimeTypeFelix20Label"
             description="%runtimeTypeFelix20Description"
-            vendor="%osami"
+            vendor="%libra"
             version="2.0"
             class="org.eclipse.libra.framework.felix.FelixFramework">
 		    <moduleType
@@ -33,13 +33,10 @@
             id="org.eclipse.libra.framework.felix.runtimeType.30x"
             name="%runtimeTypeFelix30Label"
             description="%runtimeTypeFelix30Description"
-            vendor="%osami"
+            vendor="%libra"
             version="2.0"
             class="org.eclipse.libra.framework.felix.FelixFramework">
-            <moduleType
-		         types="osami.bundle"
-		         versions="1.0"/>
-		    <moduleType
+ 		    <moduleType
 		         types="osgi.bundle"
 		         versions="4.2"/>     
 		         <moduleType

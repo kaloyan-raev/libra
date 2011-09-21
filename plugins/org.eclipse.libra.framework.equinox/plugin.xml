@@ -20,7 +20,7 @@
             id="org.eclipse.libra.framework.equinox.runtimeType.30x"
             name="%runtimeTypeEquinox30Label"
             description="%runtimeTypeEquinox30Description"
-            vendor="%osami"
+            vendor="%libra"
             version="3.6"
             class="org.eclipse.libra.framework.equinox.EquinoxFramework">
 		    <moduleType

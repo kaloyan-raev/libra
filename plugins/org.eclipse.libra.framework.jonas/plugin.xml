@@ -16,7 +16,7 @@
             id="org.eclipse.libra.framework.jonas.runtimeType"
             name="%runtimeTypeJonasLabel"
             description="%runtimeTypeJonasDescription"
-            vendor="%osami"
+            vendor="%libra"
             version="2.0"
             class="org.eclipse.libra.framework.jonas.JonasFramework">
 		    <moduleType

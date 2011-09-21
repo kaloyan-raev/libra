@@ -142,7 +142,7 @@
       <visibility>
         <and>
           <objectState name="serverType" value="org.eclipse.libra.framework.felix.serverType.*"/>
-          <objectState name="moduleType" value="osami.bundle"/>
+          <objectState name="moduleType" value="osgi.bundle"/>
         </and>
       </visibility>
       <action
