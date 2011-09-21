@@ -16,3 +16,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.filesystem,
  org.eclipse.ui.ide,
  org.eclipse.ui.browser
+Export-Package: org.eclipse.virgo.ide.management.remote,
+ org.eclipse.virgo.ide.runtime.internal.ui,
+ org.eclipse.virgo.ide.runtime.internal.ui.console,
+ org.eclipse.virgo.ide.runtime.internal.ui.dependencies,
+ org.eclipse.virgo.ide.runtime.internal.ui.model,
+ org.eclipse.virgo.ide.runtime.internal.ui.overview
+Import-Package: org.osgi.jmx.framework;version="1.5.0"
