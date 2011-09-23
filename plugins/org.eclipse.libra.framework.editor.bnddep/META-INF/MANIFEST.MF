@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Bnddep
-Bundle-SymbolicName: org.eclipse.libra.framework.bnddep
+Bundle-SymbolicName: org.eclipse.libra.framework.editor.bnddep
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui,
