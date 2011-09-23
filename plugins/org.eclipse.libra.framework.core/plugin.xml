@@ -19,7 +19,7 @@
     <framework
         id="org.eclipse.libra.framework.meta"
         launcherDelegate="org.eclipse.libra.framework.core.launching.LaunchConfigurationDelegate"
-        name="OSamI Meta Framework" >
+        name="Libra Meta Framework" >
     </framework>
   </extension>
   

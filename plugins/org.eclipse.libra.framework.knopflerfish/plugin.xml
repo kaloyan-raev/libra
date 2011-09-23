@@ -19,12 +19,10 @@
             id="org.eclipse.libra.framework.knopflerfish.runtimeType.31"
             name="%runtimeTypeKnopflerfish31Label"
             description="%runtimeTypeknopflerfish31Description"
-            vendor="%osami"
+            vendor="%libra"
             version="2.0"
             class="org.eclipse.libra.framework.knopflerfish.KnopflerfishFramework">
-            <moduleType
-		         types="osami.bundle"
-		         versions="1.0"/>
+
 		    <moduleType
 		         types="osgi.bundle"
 		         versions="4.2"/>     

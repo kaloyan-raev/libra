@@ -134,6 +134,12 @@
         id="org.eclipse.libra.framework.felix.ui.cleanserverworkdir"
         label="%cleanFelixWorkDir">
       </action>
+            <action 
+        class="org.eclipse.libra.framework.ui.internal.actions.SyncStartAction"
+        enablesFor="1"
+        id="org.eclipse.libra.framework.felix.ui.syncstart"
+        label="OSGi Run">
+      </action>
     </objectContribution>
     <objectContribution
       adaptable="true"
@@ -142,7 +148,7 @@
       <visibility>
         <and>
           <objectState name="serverType" value="org.eclipse.libra.framework.felix.serverType.*"/>
-          <objectState name="moduleType" value="osami.bundle"/>
+          <objectState name="moduleType" value="osgi.bundle"/>
         </and>
       </visibility>
       <action

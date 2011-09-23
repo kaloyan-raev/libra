@@ -18,6 +18,7 @@ package org.eclipse.libra.framework.core;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -109,147 +110,59 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 		if (originalArg == null)
 			originalArg = "";
 
-		// replace and null out all vmargs that already exist
-		int size = vmArgs.length;
-		for (int i = 0; i < size; i++) {
-			int ind = vmArgs[i].indexOf(" ");
-			int ind2 = vmArgs[i].indexOf("=");
-			if (ind >= 0 && (ind2 == -1 || ind < ind2)) { // -a bc style
-				int index = originalArg
-						.indexOf(vmArgs[i].substring(0, ind + 1));
-				if (index == 0
-						|| (index > 0 && Character.isWhitespace(originalArg
-								.charAt(index - 1)))) {
-					// replace
-					String s = originalArg.substring(0, index);
-					int index2 = getNextToken(originalArg, index + ind + 1);
-					if (index2 >= 0)
-						originalArg = s + vmArgs[i]
-								+ originalArg.substring(index2);
-					else
-						originalArg = s + vmArgs[i];
-					vmArgs[i] = null;
-				}
-			} else if (ind2 >= 0) { // a=b style
-				int index = originalArg.indexOf(vmArgs[i]
-						.substring(0, ind2 + 1));
-				if (index == 0
-						|| (index > 0 && Character.isWhitespace(originalArg
-								.charAt(index - 1)))) {
-					// replace
-					String s = originalArg.substring(0, index);
-					int index2 = getNextToken(originalArg, index);
-					if (index2 >= 0)
-						originalArg = s + vmArgs[i]
-								+ originalArg.substring(index2);
-					else
-						originalArg = s + vmArgs[i];
-					vmArgs[i] = null;
-				}
-			} else { // abc style
-				int index = originalArg.indexOf(vmArgs[i]);
-				if (index == 0
-						|| (index > 0 && Character.isWhitespace(originalArg
-								.charAt(index - 1)))) {
-					// replace
-					String s = originalArg.substring(0, index);
-					int index2 = getNextToken(originalArg, index);
-					if (!keepActionLast || i < (size - 1)) {
-						if (index2 >= 0)
-							originalArg = s + vmArgs[i]
-									+ originalArg.substring(index2);
-						else
-							originalArg = s + vmArgs[i];
-						vmArgs[i] = null;
-					} else {
-						// The last VM argument needs to remain last,
-						// remove original arg and append the vmArg later
-						if (index2 >= 0)
-							originalArg = s + originalArg.substring(index2);
-						else
-							originalArg = s;
-					}
-				}
-			}
-		}
-
-		// remove excluded arguments
-		if (excludeArgs != null && excludeArgs.length > 0) {
-			for (int i = 0; i < excludeArgs.length; i++) {
-				int ind = excludeArgs[i].indexOf(" ");
-				int ind2 = excludeArgs[i].indexOf("=");
-				if (ind >= 0 && (ind2 == -1 || ind < ind2)) { // -a bc style
-					int index = originalArg.indexOf(excludeArgs[i].substring(0,
-							ind + 1));
-					if (index == 0
-							|| (index > 0 && Character.isWhitespace(originalArg
-									.charAt(index - 1)))) {
-						// remove
-						String s = originalArg.substring(0, index);
-						int index2 = getNextToken(originalArg, index + ind + 1);
-						if (index2 >= 0) {
-							// If remainder will become the first argument,
-							// remove leading blanks
-							while (index2 < originalArg.length()
-									&& Character.isWhitespace(originalArg
-											.charAt(index2)))
-								index2 += 1;
-							originalArg = s + originalArg.substring(index2);
-						} else
-							originalArg = s;
-					}
-				} else if (ind2 >= 0) { // a=b style
-					int index = originalArg.indexOf(excludeArgs[i].substring(0,
-							ind2 + 1));
-					if (index == 0
-							|| (index > 0 && Character.isWhitespace(originalArg
-									.charAt(index - 1)))) {
-						// remove
-						String s = originalArg.substring(0, index);
-						int index2 = getNextToken(originalArg, index);
-						if (index2 >= 0) {
-							// If remainder will become the first argument,
-							// remove leading blanks
-							while (index2 < originalArg.length()
-									&& Character.isWhitespace(originalArg
-											.charAt(index2)))
-								index2 += 1;
-							originalArg = s + originalArg.substring(index2);
-						} else
-							originalArg = s;
-					}
-				} else { // abc style
-					int index = originalArg.indexOf(excludeArgs[i]);
-					if (index == 0
-							|| (index > 0 && Character.isWhitespace(originalArg
-									.charAt(index - 1)))) {
-						// remove
-						String s = originalArg.substring(0, index);
-						int index2 = getNextToken(originalArg, index);
-						if (index2 >= 0) {
-							// Remove leading blanks
-							while (index2 < originalArg.length()
-									&& Character.isWhitespace(originalArg
-											.charAt(index2)))
-								index2 += 1;
-							originalArg = s + originalArg.substring(index2);
-						} else
-							originalArg = s;
-					}
-				}
-			}
-		}
-
-		// add remaining vmargs to the end
-		for (int i = 0; i < size; i++) {
-			if (vmArgs[i] != null) {
-				if (originalArg.length() > 0 && !originalArg.endsWith(" "))
-					originalArg += " ";
-				originalArg += vmArgs[i];
-			}
-		}
-
+		originalArg = concatArgs(originalArg,  vmArgs, keepActionLast) ;
+		originalArg =excludeArgs(originalArg, excludeArgs);
+	
 		return originalArg;
+	}
+	
+	
+	private static String concatArgs(String  initialArgs, String[] newArgs, boolean keepLast) {
+		if(newArgs == null || newArgs.length <= 0)
+			return initialArgs;
+		StringBuffer args = new StringBuffer();
+		List<String> initArgsList = Arrays.asList(DebugPlugin.parseArguments(initialArgs));
+		if (initialArgs != null && initialArgs.length() > 0) {
+			int last= (keepLast? initArgsList.size()-1 : initArgsList.size() );
+			for (int i=0; i< last ; i++) {
+				if(i != 0)
+					args.append(' ');
+				args.append(initArgsList.get(i));
+			}
+		}
+		int i=0;
+		for (String anArg: newArgs) {
+			if(!initArgsList.contains(anArg)){
+				if(i++ != 0)
+					args.append(' ');
+				args.append(anArg);
+			}
+		}
+		
+		if(keepLast && initArgsList.size() >0 ){
+			args.append(' ');
+			args.append(initArgsList.get(initArgsList.size()-1));
+		}
+		return args.toString();
+	}
+	
+	private static String excludeArgs(String  initialArgs, String[] excludeArgs) {
+		if(excludeArgs == null || excludeArgs.length <= 0)
+			return initialArgs;
+		StringBuffer args = new StringBuffer();
+		List<String> excludeArgsList = Arrays.asList(excludeArgs);
+		if (initialArgs != null && initialArgs.length() > 0) {
+			String[] initArgsArray = DebugPlugin.parseArguments(initialArgs);
+			int i=0;
+			for (String anArg : initArgsArray) {
+				if (!excludeArgsList.contains(anArg)) {
+					if(i++ != 0)
+						args.append(' ');
+					args.append(anArg);
+				}
+			}
+		}
+		return args.toString();
 	}
 
 	/**

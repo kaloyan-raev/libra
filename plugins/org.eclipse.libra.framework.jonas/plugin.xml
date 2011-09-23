@@ -16,12 +16,9 @@
             id="org.eclipse.libra.framework.jonas.runtimeType"
             name="%runtimeTypeJonasLabel"
             description="%runtimeTypeJonasDescription"
-            vendor="%osami"
+            vendor="%libra"
             version="2.0"
             class="org.eclipse.libra.framework.jonas.JonasFramework">
-            <moduleType
-		         types="osami.bundle"
-		         versions="1.0"/>
 		    <moduleType
 		         types="osgi.bundle"
 		         versions="4.2"/>     
@@ -112,7 +109,7 @@
 
     <runtime-component-version
        type="org.eclipse.libra.framework.jonas.runtimeType"
-       version="6.0.x"/>
+       version="6.0"/>
  
     <adapter>
       <runtime-component
@@ -143,7 +140,7 @@
     <runtimeFacetMapping
       runtimeTypeId="org.eclipse.libra.framework.jonas.runtimeType"
       runtime-component="org.eclipse.libra.framework.jonas.runtimeType"
-      version="6.0.x"/>
+      version="6.0"/>
   </extension>
   <extension point="org.eclipse.wst.server.core.installableRuntimes">
     <runtime

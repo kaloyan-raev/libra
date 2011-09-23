@@ -15,7 +15,7 @@ import org.eclipse.libra.framework.core.OSGIFrameworkLocatorDelegate;
 public class EquinoxFrameworkInstanceLocator extends OSGIFrameworkLocatorDelegate {
 
 	protected static final String[] runtimeTypes = new String[] {
-	"org.eclipse.libra.framework.equinox.runtimeType.20x"};
+	"org.eclipse.libra.framework.equinox"};
 	
 
 	public static String[] getRuntimeTypes() {

@@ -15,7 +15,7 @@ import org.eclipse.libra.framework.core.OSGIFrameworkLocatorDelegate;
 public class KnopflerfishFrameworkInstanceLocator extends OSGIFrameworkLocatorDelegate {
 
 	protected static final String[] runtimeTypes = new String[] {
-	"org.eclipse.libra.framework.knopflerfish.runtimeType.31"};
+	"org.eclipse.libra.framework.knopflerfish"};
 	
 
 	public static String[] getRuntimeTypes() {
