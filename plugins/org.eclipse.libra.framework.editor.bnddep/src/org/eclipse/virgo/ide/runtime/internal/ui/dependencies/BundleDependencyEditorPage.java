@@ -61,7 +61,7 @@ import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.runtime.internal.ui.AbstractBundleEditorPage;
 import org.eclipse.virgo.ide.runtime.internal.ui.SearchControl;
 import org.eclipse.virgo.ide.runtime.internal.ui.SearchTextHistory;
-import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
+import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
 import org.eclipse.virgo.ide.runtime.internal.ui.overview.BundleInformationEditorPage;
 import org.eclipse.wst.server.ui.ServerUICore;
 import org.eclipse.wst.server.ui.internal.editor.ServerEditorPartInput;
@@ -304,8 +304,9 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 						monitor.beginTask("Updating bundle status from server", 1);
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								Map<Long, Bundle> allBundles = ManagementConnectorClient.getBundles(getServer()
-										.getOriginal());
+								IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) getServer().getOriginal()
+										.loadAdapter(IOSGiFrameworkAdmin.class, null);
+								Map<Long, Bundle> allBundles = admin.getBundles();
 								contentProvider.setBundles(allBundles);
 								viewer.setInput(allBundles.values());
 							}

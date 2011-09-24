@@ -35,7 +35,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.internal.browser.ImageResource;
 import org.eclipse.virgo.ide.runtime.internal.ui.AbstractBundleEditorPage;
 import org.eclipse.virgo.ide.runtime.internal.ui.SearchTextHistory;
-import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
+import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
 import org.eclipse.wst.server.ui.ServerUICore;
 
 
@@ -46,6 +46,8 @@ import org.eclipse.wst.server.ui.ServerUICore;
 @SuppressWarnings("restriction")
 public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 
+	private Text commandText;
+	
 	private StyledText manifestText;
 
 	private IToolBarManager toolBarManager;
@@ -98,7 +100,7 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 		Label commandLabel = toolkit.createLabel(manifestComposite, "Command:");
 		commandLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(commandLabel);
-		final Text commandText = toolkit.createText(manifestComposite, "", SWT.CANCEL | SWT.SEARCH);
+		commandText = toolkit.createText(manifestComposite, "", SWT.CANCEL | SWT.SEARCH);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(commandText);
 
 		commandText.addKeyListener(new KeyListener() {
@@ -106,15 +108,8 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.CR || e.character == SWT.LF) {
 					history.add(commandText.getText());
-					forwardAction.setEnabled(history.canForward());
-					backAction.setEnabled(history.canBack());
-					toolBarManager.update(true);
-					manifestText.append("osgi> " + commandText.getText() + "\n");
-					manifestText.append((ManagementConnectorClient.execute(getServer().getOriginal(), commandText
-							.getText()))
-							+ "\n");
-					manifestText.setTopIndex(manifestText.getLineCount() - 1);
-					commandText.setText("");
+					String cmdLine = commandText.getText();
+					executeCommand(cmdLine);
 				}
 				else if (e.keyCode == SWT.ARROW_UP) {
 					String command = history.back();
@@ -140,15 +135,8 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				history.add(commandText.getText());
-				forwardAction.setEnabled(history.canForward());
-				backAction.setEnabled(history.canBack());
-				toolBarManager.update(true);
-				manifestText.append("osgi> " + commandText.getText() + "\n");
-				manifestText.append((ManagementConnectorClient
-						.execute(getServer().getOriginal(), commandText.getText()))
-						+ "\n");
-				manifestText.setTopIndex(manifestText.getLineCount() - 1);
-				commandText.setText("");
+				String cmdLine = commandText.getText();
+				executeCommand(cmdLine);
 			}
 		});
 		Button clearButton = toolkit.createButton(manifestComposite, "Clear", SWT.PUSH);
@@ -175,15 +163,8 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 			@Override
 			public void run() {
 				commandText.setText(history.back());
-				manifestText.append("osgi> " + commandText.getText() + "\n");
-				manifestText.append((ManagementConnectorClient
-						.execute(getServer().getOriginal(), commandText.getText()))
-						+ "\n");
-				forwardAction.setEnabled(history.canForward());
-				backAction.setEnabled(history.canBack());
-				toolBarManager.update(true);
-				manifestText.setTopIndex(manifestText.getLineCount() - 1);
-				commandText.setText("");
+				String cmdLine = commandText.getText();
+				executeCommand(cmdLine);
 			}
 		};
 		backAction.setImageDescriptor(ImageResource
@@ -197,15 +178,8 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 			@Override
 			public void run() {
 				commandText.setText(history.forward());
-				manifestText.append("osgi> " + commandText.getText() + "\n");
-				manifestText.append((ManagementConnectorClient
-						.execute(getServer().getOriginal(), commandText.getText()))
-						+ "\n");
-				forwardAction.setEnabled(history.canForward());
-				backAction.setEnabled(history.canBack());
-				toolBarManager.update(true);
-				manifestText.setTopIndex(manifestText.getLineCount() - 1);
-				commandText.setText("");
+				String cmdLine = commandText.getText();
+				executeCommand(cmdLine);
 			}
 		};
 		forwardAction.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_FORWARD));
@@ -219,18 +193,24 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 			@Override
 			public void run() {
 				String cmdLine = history.current();
-				manifestText.append("osgi> " + cmdLine + "\n");
-				manifestText.append((ManagementConnectorClient.execute(getServer().getOriginal(), cmdLine)) + "\n");
-				forwardAction.setEnabled(history.canForward());
-				backAction.setEnabled(history.canBack());
-				toolBarManager.update(true);
-				manifestText.setTopIndex(manifestText.getLineCount() - 1);
-				commandText.setText("");
+				executeCommand(cmdLine);
 			}
 
 		};
 		toolBarManager.add(refreshAction);
 		sform.updateToolBar();
+	}
+	
+	private void executeCommand(String cmdLine) {
+		IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) getServer().getOriginal()
+				.loadAdapter(IOSGiFrameworkAdmin.class, null);
+		manifestText.append("osgi> " + cmdLine + "\n");
+		manifestText.append(admin.executeCommand(cmdLine) + "\n");
+		forwardAction.setEnabled(history.canForward());
+		backAction.setEnabled(history.canBack());
+		toolBarManager.update(true);
+		manifestText.setTopIndex(manifestText.getLineCount() - 1);
+		commandText.setText("");
 	}
 
 }

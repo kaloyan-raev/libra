@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   
+   <extension
+         point="org.eclipse.wst.server.ui.editorPages">
+      <page
+            class="org.eclipse.virgo.ide.runtime.internal.ui.overview.BundleInformationEditorPage"
+            id="org.eclipse.libra.framework.equinox.ui.editor.bundleInformation"
+            name="Bundle Overview"
+            order="30"
+            typeIds="org.eclipse.libra.framework.*">
+      </page>
+      <page
+            class="org.eclipse.virgo.ide.runtime.internal.ui.dependencies.BundleDependencyEditorPage"
+            id="org.eclipse.libra.framework.equinox.ui.editor.bundleDependency"
+            name="Bundle Dependency Graph"
+            order="40"
+            typeIds="org.eclipse.libra.framework.*">
+      </page>
+      <page
+            class="org.eclipse.virgo.ide.runtime.internal.ui.console.ServerConsoleEditorPage"
+            id="org.eclipse.libra.framework.equinox.ui.editor.serverConsole"
+            name="Server Console"
+            order="50"
+            typeIds="org.eclipse.libra.framework.*">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.wst.server.core.IServer"
+            class="org.eclipse.libra.framework.editor.integration.OSGiFrameworkAdminAdapterFactory">
+         <adapter
+               type="org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin">
+         </adapter>
+      </factory>
+   </extension>
+</plugin>

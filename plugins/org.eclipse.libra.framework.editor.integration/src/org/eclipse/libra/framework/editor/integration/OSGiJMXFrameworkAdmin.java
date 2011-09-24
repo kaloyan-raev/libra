@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2011 SAP AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - initial API and implementation
  *******************************************************************************/
-package org.eclipse.virgo.ide.runtime.internal.ui.model;
+package org.eclipse.libra.framework.editor.integration;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -30,23 +30,20 @@ import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.management.remote.PackageExport;
 import org.eclipse.virgo.ide.management.remote.PackageImport;
 import org.eclipse.virgo.ide.management.remote.ServiceReference;
-import org.eclipse.wst.server.core.IServer;
+import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
 import org.osgi.framework.Constants;
 import org.osgi.jmx.framework.BundleStateMBean;
 import org.osgi.jmx.framework.FrameworkMBean;
 import org.osgi.jmx.framework.PackageStateMBean;
 import org.osgi.jmx.framework.ServiceStateMBean;
 
-
 /**
- * Client that connects to the management MBean to retrieve bundle and service
- * data.
- * @author Christian Dupuis
- * @since 2.0.0
+ * @author Kaloyan Raev
  */
-public class ManagementConnectorClient {
-	
-	public static Map<Long, Bundle> getBundles(IServer server) {
+public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
+
+	@Override
+	public Map<Long, Bundle> getBundles() {
 		Map<Long, Bundle> map = new HashMap<Long, Bundle>();
 		
 		try {
@@ -126,33 +123,15 @@ public class ManagementConnectorClient {
 			e.printStackTrace();
 		}
 		
-//		IServerBehaviour behaviour = (IServerBehaviour) server.loadAdapter(IServerBehaviour.class,
-//				new NullProgressMonitor());
-//		if (behaviour != null) {
-//			try {
-//				return behaviour.getVersionHandler().getServerBundleAdminCommand(behaviour).execute();
-//			}
-//			catch (IOException e) {
-//			}
-//			catch (TimeoutException e) {
-//			}
-//		}
 		return map;
 	}
 
-	public static String execute(IServer server, String cmdLine) {
+	@Override
+	public void startBundle(long bundleId) {
 		try {
-			if (cmdLine.startsWith("start")) {
-				long bundleId = Long.parseLong(cmdLine.substring(6));
-				MBeanServerConnection connection = getMBeanServerConnection();
-				FrameworkMBean mbean = getFrameworkMBean(connection);
-				mbean.startBundle(bundleId);
-			} else if (cmdLine.startsWith("stop")) {
-				long bundleId = Long.parseLong(cmdLine.substring(5));
-				MBeanServerConnection connection = getMBeanServerConnection();
-				FrameworkMBean mbean = getFrameworkMBean(connection);
-				mbean.stopBundle(bundleId);
-			}
+			MBeanServerConnection connection = getMBeanServerConnection();
+			FrameworkMBean mbean = getFrameworkMBean(connection);
+			mbean.startBundle(bundleId);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -160,43 +139,82 @@ public class ManagementConnectorClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
 
-//		IServerBehaviour behaviour = (IServerBehaviour) server.loadAdapter(IServerBehaviour.class,
-//				new NullProgressMonitor());
-//		if (behaviour != null) {
-//			try {
-//				return behaviour.getVersionHandler().getServerBundleAdminExecuteCommand(behaviour, cmdLine).execute();
-//			}
-//			catch (IOException e) {
-//			}
-//			catch (TimeoutException e) {
-//			}
-//		}
-		return "<error>";
+	@Override
+	public void stopBundle(long bundleId) {
+		try {
+			MBeanServerConnection connection = getMBeanServerConnection();
+			FrameworkMBean mbean = getFrameworkMBean(connection);
+			mbean.stopBundle(bundleId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedObjectNameException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void refreshBundle(long bundleId) {
+		try {
+			MBeanServerConnection connection = getMBeanServerConnection();
+			FrameworkMBean mbean = getFrameworkMBean(connection);
+			mbean.refreshBundle(bundleId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedObjectNameException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void updateBundle(long bundleId) {
+
+		try {
+			MBeanServerConnection connection = getMBeanServerConnection();
+			FrameworkMBean mbean = getFrameworkMBean(connection);
+			mbean.updateBundle(bundleId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedObjectNameException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String executeCommand(String command) {
+		// TODO Auto-generated method stub
+		return "<not supported>";
 	}
 	
-	private static MBeanServerConnection getMBeanServerConnection() throws IOException {
+	private MBeanServerConnection getMBeanServerConnection() throws IOException {
 		JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://:1234/jmxrmi");
 		JMXConnector connector = JMXConnectorFactory.connect(url);
 		return connector.getMBeanServerConnection();
 	}
 	
-	private static BundleStateMBean getBundleStateMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
+	private BundleStateMBean getBundleStateMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
 		ObjectName objectName = new ObjectName("osgi.core:type=bundleState,version=1.5");
 		return JMX.newMBeanProxy(connection, objectName, BundleStateMBean.class);
 	}
 	
-	private static PackageStateMBean getPackageStateMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
+	private PackageStateMBean getPackageStateMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
 		ObjectName objectName = new ObjectName("osgi.core:type=packageState,version=1.5");
 		return JMX.newMBeanProxy(connection, objectName, PackageStateMBean.class);
 	}
 	
-	private static ServiceStateMBean getServiceStateMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
+	private ServiceStateMBean getServiceStateMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
 		ObjectName objectName = new ObjectName("osgi.core:type=serviceState,version=1.5");
 		return JMX.newMBeanProxy(connection, objectName, ServiceStateMBean.class);
 	}
 	
-	private static FrameworkMBean getFrameworkMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
+	private FrameworkMBean getFrameworkMBean(MBeanServerConnection connection) throws MalformedObjectNameException {
 		ObjectName objectName = new ObjectName("osgi.core:type=framework,version=1.5");
 		return JMX.newMBeanProxy(connection, objectName, FrameworkMBean.class);
 	}

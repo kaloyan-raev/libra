@@ -64,7 +64,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.internal.browser.ImageResource;
 import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.virgo.ide.management.remote.Bundle;
-import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
+import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
 
 
 /**
@@ -258,17 +258,26 @@ public class BundleInformationMasterPart extends SectionPart {
 	private void executeServerCommand(final String command) {
 		Bundle bundle = getSelectedBundle();
 		if (bundle != null) {
-			final String bundleId = bundle.getId();
+			final long bundleId = Long.parseLong(bundle.getId());
 			Job commandJob = new Job("Execute server command '" + command + "'") {
 
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					ManagementConnectorClient.execute(masterDetailsBlock.getServer(), command + " " + bundleId);
+					final IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) masterDetailsBlock.getServer()
+							.loadAdapter(IOSGiFrameworkAdmin.class, null);
+					if ("start".equals(command)) {
+						admin.startBundle(bundleId);
+					} else if ("stop".equals(command)) {
+						admin.stopBundle(bundleId);
+					} else if ("refresh".equals(command)) {
+						admin.refreshBundle(bundleId);
+					} else if ("update".equals(command)) {
+						admin.updateBundle(bundleId);
+					}
 
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {
-							masterDetailsBlock.refresh(ManagementConnectorClient.getBundles(masterDetailsBlock
-									.getServer()));
+							masterDetailsBlock.refresh(admin.getBundles());
 						}
 					});
 
@@ -305,8 +314,9 @@ public class BundleInformationMasterPart extends SectionPart {
 						monitor.beginTask("Updating bundle status from server", 1);
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								masterDetailsBlock.refresh(ManagementConnectorClient.getBundles(masterDetailsBlock
-										.getServer()));
+								IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) masterDetailsBlock.getServer()
+										.loadAdapter(IOSGiFrameworkAdmin.class, null);
+								masterDetailsBlock.refresh(admin.getBundles());
 							}
 						});
 						monitor.worked(1);

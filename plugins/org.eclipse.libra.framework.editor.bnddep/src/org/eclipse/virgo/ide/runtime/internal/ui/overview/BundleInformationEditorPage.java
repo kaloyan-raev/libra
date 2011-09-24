@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.runtime.internal.ui.AbstractBundleEditorPage;
-import org.eclipse.virgo.ide.runtime.internal.ui.model.ManagementConnectorClient;
+import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
 import org.eclipse.wst.server.ui.ServerUICore;
 import org.eclipse.wst.server.ui.internal.editor.ServerEditorPartInput;
 import org.eclipse.wst.server.ui.internal.editor.ServerResourceCommandManager;
@@ -87,8 +87,9 @@ public class BundleInformationEditorPage extends AbstractBundleEditorPage {
 				monitor.beginTask("Updating bundle status from server", 1);
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						masterDetailsBlock
-								.refresh(ManagementConnectorClient.getBundles(masterDetailsBlock.getServer()));
+						IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) masterDetailsBlock.getServer()
+								.loadAdapter(IOSGiFrameworkAdmin.class, null);
+						masterDetailsBlock.refresh(admin.getBundles());
 						masterDetailsBlock.setSelectedBundle(bundle);
 					}
 				});
