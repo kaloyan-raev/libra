@@ -14,6 +14,7 @@ package org.eclipse.virgo.ide.runtime.internal.ui.dependencies;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -32,6 +33,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.libra.framework.editor.internal.EditorPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -306,9 +308,13 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 							public void run() {
 								IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) getServer().getOriginal()
 										.loadAdapter(IOSGiFrameworkAdmin.class, null);
-								Map<Long, Bundle> allBundles = admin.getBundles();
-								contentProvider.setBundles(allBundles);
-								viewer.setInput(allBundles.values());
+								try {
+									Map<Long, Bundle> allBundles = admin.getBundles();
+									contentProvider.setBundles(allBundles);
+									viewer.setInput(allBundles.values());
+								} catch (CoreException e) {
+									EditorPlugin.log(e);
+								}
 							}
 						});
 						monitor.worked(1);

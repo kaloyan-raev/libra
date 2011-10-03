@@ -43,6 +43,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.libra.framework.editor.internal.EditorPlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
@@ -745,8 +746,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(); 
 			page.openEditor(input, desc.getId());
 		} catch (Exception e) {
-			// TODO improve logging
-			e.printStackTrace();
+			EditorPlugin.log(e);
 		}
 	}
 	

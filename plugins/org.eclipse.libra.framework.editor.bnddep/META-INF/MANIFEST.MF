@@ -22,3 +22,5 @@ Export-Package: org.eclipse.virgo.ide.management.remote,
  org.eclipse.virgo.ide.runtime.internal.ui.dependencies,
  org.eclipse.virgo.ide.runtime.internal.ui.model,
  org.eclipse.virgo.ide.runtime.internal.ui.overview
+Bundle-Activator: org.eclipse.libra.framework.editor.internal.EditorPlugin
+Bundle-ActivationPolicy: lazy

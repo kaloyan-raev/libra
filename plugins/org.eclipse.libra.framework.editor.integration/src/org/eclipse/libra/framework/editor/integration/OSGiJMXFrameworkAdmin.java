@@ -26,6 +26,10 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.libra.framework.editor.integration.internal.IntegrationPlugin;
 import org.eclipse.virgo.ide.management.remote.Bundle;
 import org.eclipse.virgo.ide.management.remote.PackageExport;
 import org.eclipse.virgo.ide.management.remote.PackageImport;
@@ -43,7 +47,7 @@ import org.osgi.jmx.framework.ServiceStateMBean;
 public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 
 	@Override
-	public Map<Long, Bundle> getBundles() {
+	public Map<Long, Bundle> getBundles() throws CoreException {
 		Map<Long, Bundle> map = new HashMap<Long, Bundle>();
 		
 		try {
@@ -115,82 +119,61 @@ public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 				
 				map.put(Long.parseLong(id), bundle);
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedObjectNameException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new CoreException(IntegrationPlugin.newErrorStatus(e));
 		}
 		
 		return map;
 	}
 
 	@Override
-	public void startBundle(long bundleId) {
+	public void startBundle(long bundleId) throws CoreException {
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();
 			FrameworkMBean mbean = getFrameworkMBean(connection);
 			mbean.startBundle(bundleId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedObjectNameException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new CoreException(IntegrationPlugin.newErrorStatus(e));
 		}
 	}
 
 	@Override
-	public void stopBundle(long bundleId) {
+	public void stopBundle(long bundleId) throws CoreException {
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();
 			FrameworkMBean mbean = getFrameworkMBean(connection);
 			mbean.stopBundle(bundleId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedObjectNameException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new CoreException(IntegrationPlugin.newErrorStatus(e));
 		}
 	}
 
 	@Override
-	public void refreshBundle(long bundleId) {
+	public void refreshBundle(long bundleId) throws CoreException {
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();
 			FrameworkMBean mbean = getFrameworkMBean(connection);
 			mbean.refreshBundle(bundleId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedObjectNameException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new CoreException(IntegrationPlugin.newErrorStatus(e));
 		}
 	}
 
 	@Override
-	public void updateBundle(long bundleId) {
+	public void updateBundle(long bundleId) throws CoreException {
 
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();
 			FrameworkMBean mbean = getFrameworkMBean(connection);
 			mbean.updateBundle(bundleId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedObjectNameException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new CoreException(IntegrationPlugin.newErrorStatus(e));
 		}
 	}
 
 	@Override
-	public String executeCommand(String command) {
-		// TODO Auto-generated method stub
-		return "<not supported>";
+	public String executeCommand(String command) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, IntegrationPlugin.PLUGIN_ID, "Shell commands not supported"));
 	}
 	
 	private MBeanServerConnection getMBeanServerConnection() throws IOException {

@@ -12,6 +12,7 @@ package org.eclipse.virgo.ide.runtime.internal.ui.model;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.virgo.ide.management.remote.Bundle;
 
 /**
@@ -19,16 +20,16 @@ import org.eclipse.virgo.ide.management.remote.Bundle;
  */
 public interface IOSGiFrameworkAdmin {
 	
-	public Map<Long, Bundle> getBundles();
+	public Map<Long, Bundle> getBundles() throws CoreException;
 	
-	public void startBundle(long bundleId);
+	public void startBundle(long bundleId) throws CoreException;
 	
-	public void stopBundle(long bundleId);
+	public void stopBundle(long bundleId) throws CoreException;
 	
-	public void refreshBundle(long bundleId);
+	public void refreshBundle(long bundleId) throws CoreException;
 	
-	public void updateBundle(long bundleId);
+	public void updateBundle(long bundleId) throws CoreException;
 	
-	public String executeCommand(String command);
+	public String executeCommand(String command) throws CoreException;
 
 }

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -37,6 +38,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.libra.framework.editor.internal.EditorPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -265,23 +267,31 @@ public class BundleInformationMasterPart extends SectionPart {
 				protected IStatus run(IProgressMonitor monitor) {
 					final IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) masterDetailsBlock.getServer()
 							.loadAdapter(IOSGiFrameworkAdmin.class, null);
-					if ("start".equals(command)) {
-						admin.startBundle(bundleId);
-					} else if ("stop".equals(command)) {
-						admin.stopBundle(bundleId);
-					} else if ("refresh".equals(command)) {
-						admin.refreshBundle(bundleId);
-					} else if ("update".equals(command)) {
-						admin.updateBundle(bundleId);
-					}
-
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							masterDetailsBlock.refresh(admin.getBundles());
+					try {
+						if ("start".equals(command)) {
+							admin.startBundle(bundleId);
+						} else if ("stop".equals(command)) {
+							admin.stopBundle(bundleId);
+						} else if ("refresh".equals(command)) {
+							admin.refreshBundle(bundleId);
+						} else if ("update".equals(command)) {
+							admin.updateBundle(bundleId);
 						}
-					});
-
-					return Status.OK_STATUS;
+	
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								try {
+									masterDetailsBlock.refresh(admin.getBundles());
+								} catch (CoreException e) {
+									EditorPlugin.log(e);
+								}
+							}
+						});
+	
+						return Status.OK_STATUS;
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
 				}
 			};
 			commandJob.setSystem(true);
@@ -316,7 +326,11 @@ public class BundleInformationMasterPart extends SectionPart {
 							public void run() {
 								IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) masterDetailsBlock.getServer()
 										.loadAdapter(IOSGiFrameworkAdmin.class, null);
-								masterDetailsBlock.refresh(admin.getBundles());
+								try {
+									masterDetailsBlock.refresh(admin.getBundles());
+								} catch (CoreException e) {
+									EditorPlugin.log(e);
+								}
 							}
 						});
 						monitor.worked(1);

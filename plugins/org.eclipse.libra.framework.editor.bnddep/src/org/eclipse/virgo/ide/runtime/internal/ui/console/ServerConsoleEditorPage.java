@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.virgo.ide.runtime.internal.ui.console;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.libra.framework.editor.internal.EditorPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
@@ -204,12 +206,18 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 	private void executeCommand(String cmdLine) {
 		IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) getServer().getOriginal()
 				.loadAdapter(IOSGiFrameworkAdmin.class, null);
-		manifestText.append("osgi> " + cmdLine + "\n");
-		manifestText.append(admin.executeCommand(cmdLine) + "\n");
-		forwardAction.setEnabled(history.canForward());
-		backAction.setEnabled(history.canBack());
-		toolBarManager.update(true);
-		manifestText.setTopIndex(manifestText.getLineCount() - 1);
+		try {
+			String result = admin.executeCommand(cmdLine);
+			manifestText.append("osgi> " + cmdLine + "\n");
+			manifestText.append(result + "\n");
+			forwardAction.setEnabled(history.canForward());
+			backAction.setEnabled(history.canBack());
+			toolBarManager.update(true);
+			manifestText.setTopIndex(manifestText.getLineCount() - 1);
+		} catch (CoreException e) {
+			EditorPlugin.log(e);
+			manifestText.append("Failed to execute command. See Error Log for details.\n");
+		}
 		commandText.setText("");
 	}
 
