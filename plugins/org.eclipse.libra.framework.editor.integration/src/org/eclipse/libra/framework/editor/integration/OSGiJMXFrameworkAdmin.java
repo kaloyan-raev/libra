@@ -170,11 +170,6 @@ public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 			throw new CoreException(IntegrationPlugin.newErrorStatus(e));
 		}
 	}
-
-	@Override
-	public String executeCommand(String command) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, IntegrationPlugin.PLUGIN_ID, "Shell commands not supported"));
-	}
 	
 	private MBeanServerConnection getMBeanServerConnection() throws IOException {
 		JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://:1234/jmxrmi");

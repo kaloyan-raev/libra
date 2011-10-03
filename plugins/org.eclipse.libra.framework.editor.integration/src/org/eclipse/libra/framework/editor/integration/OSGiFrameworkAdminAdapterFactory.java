@@ -13,6 +13,7 @@ package org.eclipse.libra.framework.editor.integration;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.libra.framework.core.OSGIFrameworkInstanceBehaviorDelegate;
 import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
+import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkConsole;
 import org.eclipse.wst.server.core.IServer;
 
 /**
@@ -22,12 +23,14 @@ public class OSGiFrameworkAdminAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adaptableObject instanceof IServer && adapterType == IOSGiFrameworkAdmin.class) {
+		if (adaptableObject instanceof IServer) {
 			IServer server = (IServer) adaptableObject;
-			OSGIFrameworkInstanceBehaviorDelegate behavior = (OSGIFrameworkInstanceBehaviorDelegate) server
-					.loadAdapter(OSGIFrameworkInstanceBehaviorDelegate.class, null);
-			if (behavior != null) {
-				return new OSGiJMXFrameworkAdmin();
+			if (isLibraLauncher(server)) {
+				if (adapterType == IOSGiFrameworkAdmin.class) {
+					return new OSGiJMXFrameworkAdmin();
+				} else if (adapterType == IOSGiFrameworkConsole.class) {
+					return new SimpleOSGiFrameworkConsole();
+				}
 			}
 		}
 		return null;
@@ -35,7 +38,11 @@ public class OSGiFrameworkAdminAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public Class[] getAdapterList() {
-		return new Class[] { IOSGiFrameworkAdmin.class };
+		return new Class[] { IOSGiFrameworkAdmin.class, IOSGiFrameworkConsole.class };
+	}
+	
+	private boolean isLibraLauncher(IServer server) {
+		return null != server.loadAdapter(OSGIFrameworkInstanceBehaviorDelegate.class, null);
 	}
 
 }

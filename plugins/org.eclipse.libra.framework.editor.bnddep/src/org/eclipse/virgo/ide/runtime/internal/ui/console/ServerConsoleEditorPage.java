@@ -37,7 +37,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.internal.browser.ImageResource;
 import org.eclipse.virgo.ide.runtime.internal.ui.AbstractBundleEditorPage;
 import org.eclipse.virgo.ide.runtime.internal.ui.SearchTextHistory;
-import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
+import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkConsole;
 import org.eclipse.wst.server.ui.ServerUICore;
 
 
@@ -204,10 +204,10 @@ public class ServerConsoleEditorPage extends AbstractBundleEditorPage {
 	}
 	
 	private void executeCommand(String cmdLine) {
-		IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) getServer().getOriginal()
-				.loadAdapter(IOSGiFrameworkAdmin.class, null);
+		IOSGiFrameworkConsole console = (IOSGiFrameworkConsole) getServer().getOriginal()
+				.loadAdapter(IOSGiFrameworkConsole.class, null);
 		try {
-			String result = admin.executeCommand(cmdLine);
+			String result = console.executeCommand(cmdLine);
 			manifestText.append("osgi> " + cmdLine + "\n");
 			manifestText.append(result + "\n");
 			forwardAction.setEnabled(history.canForward());

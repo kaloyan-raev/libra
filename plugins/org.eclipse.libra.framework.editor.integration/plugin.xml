@@ -34,6 +34,9 @@
          <adapter
                type="org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin">
          </adapter>
+         <adapter
+               type="org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkConsole">
+         </adapter>
       </factory>
    </extension>
 </plugin>
