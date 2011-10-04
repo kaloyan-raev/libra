@@ -12,8 +12,8 @@ package org.eclipse.libra.framework.editor.integration;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.libra.framework.core.OSGIFrameworkInstanceBehaviorDelegate;
-import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkAdmin;
-import org.eclipse.virgo.ide.runtime.internal.ui.model.IOSGiFrameworkConsole;
+import org.eclipse.libra.framework.editor.core.IOSGiFrameworkAdmin;
+import org.eclipse.libra.framework.editor.core.IOSGiFrameworkConsole;
 import org.eclipse.wst.server.core.IServer;
 
 /**
