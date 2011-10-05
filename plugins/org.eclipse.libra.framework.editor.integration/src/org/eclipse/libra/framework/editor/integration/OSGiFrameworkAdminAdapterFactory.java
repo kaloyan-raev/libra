@@ -21,7 +21,6 @@ import org.eclipse.wst.server.core.IServer;
  */
 public class OSGiFrameworkAdminAdapterFactory implements IAdapterFactory {
 
-	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof IServer) {
 			IServer server = (IServer) adaptableObject;
@@ -36,7 +35,6 @@ public class OSGiFrameworkAdminAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { IOSGiFrameworkAdmin.class, IOSGiFrameworkConsole.class };
 	}

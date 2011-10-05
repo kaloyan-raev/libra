@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OSGi Framework Editor UI
 Bundle-SymbolicName: org.eclipse.libra.framework.editor.ui
 Bundle-Version: 0.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.libra.framework.editor.ui.console;version="0.1.0";
   uses:="org.eclipse.libra.framework.editor.ui.internal.overview,
    org.eclipse.libra.framework.editor.ui.internal,

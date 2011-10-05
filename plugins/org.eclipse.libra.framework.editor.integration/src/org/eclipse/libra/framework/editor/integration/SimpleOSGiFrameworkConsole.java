@@ -8,7 +8,6 @@ import org.eclipse.libra.framework.editor.integration.internal.IntegrationPlugin
 
 public class SimpleOSGiFrameworkConsole implements IOSGiFrameworkConsole {
 
-	@Override
 	public String executeCommand(String command) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, IntegrationPlugin.PLUGIN_ID, "Shell commands not supported"));
 	}

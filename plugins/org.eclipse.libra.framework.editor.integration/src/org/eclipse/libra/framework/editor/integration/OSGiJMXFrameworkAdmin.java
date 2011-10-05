@@ -44,7 +44,6 @@ import org.osgi.jmx.framework.ServiceStateMBean;
  */
 public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 
-	@Override
 	public Map<Long, Bundle> getBundles() throws CoreException {
 		Map<Long, Bundle> map = new HashMap<Long, Bundle>();
 		
@@ -124,7 +123,6 @@ public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 		return map;
 	}
 
-	@Override
 	public void startBundle(long bundleId) throws CoreException {
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();
@@ -135,7 +133,6 @@ public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 		}
 	}
 
-	@Override
 	public void stopBundle(long bundleId) throws CoreException {
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();
@@ -146,7 +143,6 @@ public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 		}
 	}
 
-	@Override
 	public void refreshBundle(long bundleId) throws CoreException {
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();
@@ -157,7 +153,6 @@ public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 		}
 	}
 
-	@Override
 	public void updateBundle(long bundleId) throws CoreException {
 
 		try {

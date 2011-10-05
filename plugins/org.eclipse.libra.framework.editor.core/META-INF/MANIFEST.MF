@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OSGi Framework Editor Core
 Bundle-SymbolicName: org.eclipse.libra.framework.editor.core
 Bundle-Version: 0.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.libra.framework.editor.core;version="0.1.0",
  org.eclipse.libra.framework.editor.core.model;version="0.1.0"
 Require-Bundle: org.eclipse.core.runtime
