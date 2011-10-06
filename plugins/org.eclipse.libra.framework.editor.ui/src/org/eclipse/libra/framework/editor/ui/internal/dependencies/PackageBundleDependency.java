@@ -14,10 +14,8 @@ package org.eclipse.libra.framework.editor.ui.internal.dependencies;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.libra.framework.editor.core.model.Bundle;
-import org.eclipse.libra.framework.editor.core.model.PackageImport;
-
-
+import org.eclipse.libra.framework.editor.core.model.IBundle;
+import org.eclipse.libra.framework.editor.core.model.IPackageImport;
 
 /**
  * @author Christian Dupuis
@@ -25,13 +23,13 @@ import org.eclipse.libra.framework.editor.core.model.PackageImport;
  */
 public class PackageBundleDependency extends BundleDependency {
 
-	private final Set<PackageImport> packageImport = new HashSet<PackageImport>();
+	private final Set<IPackageImport> packageImport = new HashSet<IPackageImport>();
 
-	public PackageBundleDependency(Bundle exportingBundle, Bundle importingBundle) {
+	public PackageBundleDependency(IBundle exportingBundle, IBundle importingBundle) {
 		super(exportingBundle, importingBundle);
 	}
 
-	public void addPackageImport(PackageImport pe) {
+	public void addPackageImport(IPackageImport pe) {
 		packageImport.add(pe);
 	}
 

@@ -23,14 +23,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.libra.framework.editor.core.model.Bundle;
-import org.eclipse.libra.framework.editor.core.model.PackageImport;
-import org.eclipse.libra.framework.editor.core.model.ServiceReference;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
+import org.eclipse.libra.framework.editor.core.model.IPackageImport;
+import org.eclipse.libra.framework.editor.core.model.IServiceReference;
 import org.eclipse.libra.framework.editor.ui.internal.SearchControl;
 import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IGraphContentProvider;
-
 
 /**
  * @author Christian Dupuis
@@ -41,11 +40,11 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 
 	private static final Object[] NO_ELEMENTS = new Object[0];
 
-	private Map<Long, Bundle> bundles;
+	private Map<Long, IBundle> bundles;
 
 	private BundleDependencyContentResult contentResult;
 
-	private Map<Bundle, Set<BundleDependency>> dependenciesByBundle;
+	private Map<IBundle, Set<BundleDependency>> dependenciesByBundle;
 
 	private int incomingDependencyDegree = 1;
 
@@ -97,13 +96,13 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 	@SuppressWarnings( { "unchecked" })
 	public Object[] getElements(Object input) {
 		if (input instanceof Collection) {
-			dependenciesByBundle = new HashMap<Bundle, Set<BundleDependency>>();
-			Set<Bundle> bundles = new HashSet<Bundle>((Collection<Bundle>) input);
+			dependenciesByBundle = new HashMap<IBundle, Set<BundleDependency>>();
+			Set<IBundle> bundles = new HashSet<IBundle>((Collection<IBundle>) input);
 			if (!"type filter text".equals(searchControl.getSearchText().getText())
 					&& searchControl.getSearchText().getText().trim().length() > 0) {
 				String searchText = searchControl.getSearchText().getText().trim() + "*";
 				StringMatcher matcher = new StringMatcher(searchText, true, false);
-				for (Bundle dep : new HashSet<Bundle>(bundles)) {
+				for (IBundle dep : new HashSet<IBundle>(bundles)) {
 					boolean filter = true;
 					if (matcher.match(dep.getSymbolicName())) {
 						filter = false;
@@ -120,58 +119,58 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 
 			Set<BundleDependency> dependencies = new HashSet<BundleDependency>();
 			if (showPackage) {
-				Set<Bundle> bundlesToProcess = new HashSet<Bundle>(bundles);
-				Set<Bundle> alreadyProcessedBundles = new HashSet<Bundle>();
+				Set<IBundle> bundlesToProcess = new HashSet<IBundle>(bundles);
+				Set<IBundle> alreadyProcessedBundles = new HashSet<IBundle>();
 				int degree = 0;
 
 				do {
 					degree++;
-					Set<Bundle> copy = new HashSet<Bundle>(bundlesToProcess);
-					bundlesToProcess = new HashSet<Bundle>();
-					for (Bundle b : copy) {
+					Set<IBundle> copy = new HashSet<IBundle>(bundlesToProcess);
+					bundlesToProcess = new HashSet<IBundle>();
+					for (IBundle b : copy) {
 						bundlesToProcess.addAll(addOutgoingPackageDependencies(dependencies, b, degree,
 								alreadyProcessedBundles));
 					}
 				} while (bundlesToProcess.size() > 0);
 
-				bundlesToProcess = new HashSet<Bundle>(bundles);
-				alreadyProcessedBundles = new HashSet<Bundle>();
+				bundlesToProcess = new HashSet<IBundle>(bundles);
+				alreadyProcessedBundles = new HashSet<IBundle>();
 				degree = 0;
 
 				do {
 					degree++;
-					Set<Bundle> copy = new HashSet<Bundle>(bundlesToProcess);
-					bundlesToProcess = new HashSet<Bundle>();
-					for (Bundle b : copy) {
+					Set<IBundle> copy = new HashSet<IBundle>(bundlesToProcess);
+					bundlesToProcess = new HashSet<IBundle>();
+					for (IBundle b : copy) {
 						bundlesToProcess.addAll(addIncomingPackageDependencies(dependencies, b, degree,
 								alreadyProcessedBundles));
 					}
 				} while (bundlesToProcess.size() > 0);
 			}
 			else if (showServices) {
-				Set<Bundle> bundlesToProcess = new HashSet<Bundle>(bundles);
-				Set<Bundle> alreadyProcessedBundles = new HashSet<Bundle>();
+				Set<IBundle> bundlesToProcess = new HashSet<IBundle>(bundles);
+				Set<IBundle> alreadyProcessedBundles = new HashSet<IBundle>();
 				int degree = 0;
 
 				do {
 					degree++;
-					Set<Bundle> copy = new HashSet<Bundle>(bundlesToProcess);
-					bundlesToProcess = new HashSet<Bundle>();
-					for (Bundle b : copy) {
+					Set<IBundle> copy = new HashSet<IBundle>(bundlesToProcess);
+					bundlesToProcess = new HashSet<IBundle>();
+					for (IBundle b : copy) {
 						bundlesToProcess.addAll(addOutgoingServiceDependencies(dependencies, b, degree,
 								alreadyProcessedBundles));
 					}
 				} while (bundlesToProcess.size() > 0);
 
-				bundlesToProcess = new HashSet<Bundle>(bundles);
-				alreadyProcessedBundles = new HashSet<Bundle>();
+				bundlesToProcess = new HashSet<IBundle>(bundles);
+				alreadyProcessedBundles = new HashSet<IBundle>();
 				degree = 0;
 
 				do {
 					degree++;
-					Set<Bundle> copy = new HashSet<Bundle>(bundlesToProcess);
-					bundlesToProcess = new HashSet<Bundle>();
-					for (Bundle b : copy) {
+					Set<IBundle> copy = new HashSet<IBundle>(bundlesToProcess);
+					bundlesToProcess = new HashSet<IBundle>();
+					for (IBundle b : copy) {
 						bundlesToProcess.addAll(addIncomingServiceDependencies(dependencies, b, degree,
 								alreadyProcessedBundles));
 					}
@@ -198,7 +197,7 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
-	public boolean isSelected(Bundle bundle) {
+	public boolean isSelected(IBundle bundle) {
 		for (BundleDependency dep : selectedDependencies) {
 			if (dep.getExportingBundle().equals(bundle)) {
 				return true;
@@ -221,7 +220,7 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 		Iterator<Object> iterator = ((IStructuredSelection) event.getSelection()).iterator();
 		while (iterator.hasNext()) {
 			Object selectedObject = iterator.next();
-			if (selectedObject instanceof Bundle) {
+			if (selectedObject instanceof IBundle) {
 				newSelection.add(selectedObject);
 				if (dependenciesByBundle.containsKey(selectedObject)) {
 					for (BundleDependency dep : dependenciesByBundle.get(selectedObject)) {
@@ -256,8 +255,8 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 		// viewer.getGraphControl().redraw();
 	}
 
-	public void setBundles(Map<Long, Bundle> bundles) {
-		this.bundles = new HashMap<Long, Bundle>(bundles);
+	public void setBundles(Map<Long, IBundle> bundles) {
+		this.bundles = new HashMap<Long, IBundle>(bundles);
 	}
 
 	public void setIncomingDependencyDegree(int degree) {
@@ -276,20 +275,20 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 		this.showServices = showServices;
 	}
 
-	private Set<Bundle> addIncomingPackageDependencies(Set<BundleDependency> dependencies, Bundle bundle, int degree,
-			Set<Bundle> processedBundles) {
+	private Set<IBundle> addIncomingPackageDependencies(Set<BundleDependency> dependencies, IBundle bundle, int degree,
+			Set<IBundle> processedBundles) {
 
 		if (processedBundles.contains(bundle)) {
 			return Collections.emptySet();
 		}
 		processedBundles.add(bundle);
 
-		Set<Bundle> dependentBundles = new HashSet<Bundle>();
+		Set<IBundle> dependentBundles = new HashSet<IBundle>();
 		if (incomingDependencyDegree >= degree) {
 			String id = bundle.getId();
 
-			for (Bundle dependantBundle : this.bundles.values()) {
-				for (PackageImport packageImport : dependantBundle.getPackageImports()) {
+			for (IBundle dependantBundle : this.bundles.values()) {
+				for (IPackageImport packageImport : dependantBundle.getPackageImports()) {
 					if (packageImport.getSupplierId().equals(id)) {
 
 						Set<BundleDependency> bundleDependencies = null;
@@ -329,19 +328,19 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 		return Collections.emptySet();
 	}
 
-	private Set<Bundle> addIncomingServiceDependencies(Set<BundleDependency> dependencies, Bundle bundle, int degree,
-			Set<Bundle> processedBundles) {
+	private Set<IBundle> addIncomingServiceDependencies(Set<BundleDependency> dependencies, IBundle bundle, int degree,
+			Set<IBundle> processedBundles) {
 
 		if (processedBundles.contains(bundle)) {
 			return Collections.emptySet();
 		}
 		processedBundles.add(bundle);
 
-		Set<Bundle> dependentBundles = new HashSet<Bundle>();
+		Set<IBundle> dependentBundles = new HashSet<IBundle>();
 		if (incomingDependencyDegree >= degree) {
-			for (ServiceReference pe : bundle.getRegisteredServices()) {
+			for (IServiceReference pe : bundle.getRegisteredServices()) {
 				for (Long id : pe.getUsingBundleIds()) {
-					Bundle dependantBundle = this.bundles.get(id);
+					IBundle dependantBundle = this.bundles.get(id);
 
 					Set<BundleDependency> bundleDependencies = null;
 					if (dependenciesByBundle.containsKey(bundle)) {
@@ -380,18 +379,18 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 		return Collections.emptySet();
 	}
 
-	private Set<Bundle> addOutgoingPackageDependencies(Set<BundleDependency> dependencies, Bundle bundle, int degree,
-			Set<Bundle> processedBundles) {
+	private Set<IBundle> addOutgoingPackageDependencies(Set<BundleDependency> dependencies, IBundle bundle, int degree,
+			Set<IBundle> processedBundles) {
 
 		if (processedBundles.contains(bundle)) {
 			return Collections.emptySet();
 		}
 		processedBundles.add(bundle);
 
-		Set<Bundle> dependentBundles = new HashSet<Bundle>();
+		Set<IBundle> dependentBundles = new HashSet<IBundle>();
 		if (outgoingDependencyDegree >= degree) {
-			for (PackageImport pe : bundle.getPackageImports()) {
-				Bundle dependantBundle = this.bundles.get(Long.valueOf(pe.getSupplierId()));
+			for (IPackageImport pe : bundle.getPackageImports()) {
+				IBundle dependantBundle = this.bundles.get(Long.valueOf(pe.getSupplierId()));
 
 				Set<BundleDependency> bundleDependencies = null;
 				if (dependenciesByBundle.containsKey(bundle)) {
@@ -428,18 +427,18 @@ public class BundleDependencyContentProvider implements IGraphContentProvider, I
 		return Collections.emptySet();
 	}
 
-	private Set<Bundle> addOutgoingServiceDependencies(Set<BundleDependency> dependencies, Bundle bundle, int degree,
-			Set<Bundle> processedBundles) {
+	private Set<IBundle> addOutgoingServiceDependencies(Set<BundleDependency> dependencies, IBundle bundle, int degree,
+			Set<IBundle> processedBundles) {
 
 		if (processedBundles.contains(bundle)) {
 			return Collections.emptySet();
 		}
 		processedBundles.add(bundle);
 
-		Set<Bundle> dependentBundles = new HashSet<Bundle>();
+		Set<IBundle> dependentBundles = new HashSet<IBundle>();
 		if (outgoingDependencyDegree >= degree) {
-			for (ServiceReference pe : bundle.getServicesInUse()) {
-				Bundle dependantBundle = this.bundles.get(pe.getBundleId());
+			for (IServiceReference pe : bundle.getServicesInUse()) {
+				IBundle dependantBundle = this.bundles.get(pe.getBundleId());
 
 				Set<BundleDependency> bundleDependencies = null;
 				if (dependenciesByBundle.containsKey(bundle)) {

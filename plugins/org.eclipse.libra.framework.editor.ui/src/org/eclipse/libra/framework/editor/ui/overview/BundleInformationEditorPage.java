@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.libra.framework.editor.core.IOSGiFrameworkAdmin;
-import org.eclipse.libra.framework.editor.core.model.Bundle;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 import org.eclipse.libra.framework.editor.ui.internal.AbstractBundleEditorPage;
 import org.eclipse.libra.framework.editor.ui.internal.EditorUIPlugin;
 import org.eclipse.libra.framework.editor.ui.internal.overview.BundleInformationMasterDetailsBlock;
@@ -83,7 +83,7 @@ public class BundleInformationEditorPage extends AbstractBundleEditorPage {
 		commandManager = ((ServerEditorPartInput) input).getServerCommandManager();
 	}
 
-	public void showOverviewForBundle(final Bundle bundle) {
+	public void showOverviewForBundle(final IBundle bundle) {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {

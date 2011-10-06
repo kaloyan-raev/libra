@@ -39,7 +39,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.libra.framework.editor.core.IOSGiFrameworkAdmin;
-import org.eclipse.libra.framework.editor.core.model.Bundle;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 import org.eclipse.libra.framework.editor.ui.internal.EditorUIPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
@@ -170,10 +170,10 @@ public class BundleInformationMasterPart extends SectionPart {
 
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof Bundle && filterText.getText().length() > 0
+				if (element instanceof IBundle && filterText.getText().length() > 0
 						&& !TYPE_FILTER_TEXT.equals(filterText.getText())) {
 					StringMatcher matcher = new StringMatcher(filterText.getText() + "*", true, false);
-					return (matcher.match(((Bundle) element).getSymbolicName()));
+					return (matcher.match(((IBundle) element).getSymbolicName()));
 				}
 				return true;
 			}
@@ -248,17 +248,17 @@ public class BundleInformationMasterPart extends SectionPart {
 		updateButton.setEnabled(bundleSelected);
 	}
 	
-	private Bundle getSelectedBundle() {
+	private IBundle getSelectedBundle() {
 		Object selectedObject = ((IStructuredSelection) bundleTableViewer
 				.getSelection()).getFirstElement();
-		if (selectedObject instanceof Bundle) {
-			return (Bundle) selectedObject;
+		if (selectedObject instanceof IBundle) {
+			return (IBundle) selectedObject;
 		}
 		return null;
 	}
 
 	private void executeServerCommand(final String command) {
-		Bundle bundle = getSelectedBundle();
+		IBundle bundle = getSelectedBundle();
 		if (bundle != null) {
 			final long bundleId = Long.parseLong(bundle.getId());
 			Job commandJob = new Job("Execute server command '" + command + "'") {
@@ -355,7 +355,7 @@ public class BundleInformationMasterPart extends SectionPart {
 		section.setTextClient(toolbar);
 	}
 
-	public void refresh(Map<Long, Bundle> bundles) {
+	public void refresh(Map<Long, IBundle> bundles) {
 		super.refresh();
 		bundleTableViewer.setInput(bundles);
 	}
@@ -366,7 +366,7 @@ public class BundleInformationMasterPart extends SectionPart {
 
 	class BundleStatusContentProvider implements IStructuredContentProvider {
 
-		private Map<Long, Bundle> bundles;
+		private Map<Long, IBundle> bundles;
 
 		public Object[] getElements(Object inputElement) {
 			if (bundles != null) {
@@ -381,7 +381,7 @@ public class BundleInformationMasterPart extends SectionPart {
 		@SuppressWarnings("unchecked")
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput instanceof Map) {
-				bundles = (Map<Long, Bundle>) newInput;
+				bundles = (Map<Long, IBundle>) newInput;
 			}
 			else {
 				bundles = null;
@@ -402,7 +402,7 @@ public class BundleInformationMasterPart extends SectionPart {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			Bundle bundle = (Bundle) element;
+			IBundle bundle = (IBundle) element;
 			switch (columnIndex) {
 			case 1:
 				return bundle.getId();
@@ -422,7 +422,7 @@ public class BundleInformationMasterPart extends SectionPart {
 			Arrays.sort(elements, new Comparator<Object>() {
 
 				public int compare(Object o1, Object o2) {
-					return Long.valueOf(((Bundle) o1).getId()).compareTo(Long.valueOf(((Bundle) o2).getId()));
+					return Long.valueOf(((IBundle) o1).getId()).compareTo(Long.valueOf(((IBundle) o2).getId()));
 				}
 			});
 		}
@@ -472,8 +472,8 @@ public class BundleInformationMasterPart extends SectionPart {
 
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			Bundle b1 = (Bundle) e1;
-			Bundle b2 = (Bundle) e2;
+			IBundle b1 = (IBundle) e1;
+			IBundle b2 = (IBundle) e2;
 			int compare = 0;
 			switch (sortColumn) {
 			case ID:
@@ -497,7 +497,7 @@ public class BundleInformationMasterPart extends SectionPart {
 		ID, STATUS, NAME
 	}
 
-	public void setSelectedBundle(Bundle bundle) {
+	public void setSelectedBundle(IBundle bundle) {
 		this.bundleTableViewer.setSelection(new StructuredSelection(bundle));
 		this.bundleTableViewer.reveal(bundle);
 	}

@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.libra.framework.editor.core.IOSGiFrameworkAdmin;
-import org.eclipse.libra.framework.editor.core.model.Bundle;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 import org.eclipse.libra.framework.editor.ui.internal.AbstractBundleEditorPage;
 import org.eclipse.libra.framework.editor.ui.internal.EditorUIPlugin;
 import org.eclipse.libra.framework.editor.ui.internal.SearchControl;
@@ -251,8 +251,8 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 
 			public void doubleClick(DoubleClickEvent event) {
 				Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				if (selection instanceof Bundle) {
-					Bundle bundle = (Bundle) selection;
+				if (selection instanceof IBundle) {
+					IBundle bundle = (IBundle) selection;
 					searchControl.getSearchText().setText(bundle.getSymbolicName() + " (" + bundle.getVersion() + ")");
 					history.add(bundle.getSymbolicName() + " (" + bundle.getVersion() + ")");
 					forwardAction.setEnabled(history.canForward());
@@ -312,7 +312,7 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 								IOSGiFrameworkAdmin admin = (IOSGiFrameworkAdmin) getServer().getOriginal()
 										.loadAdapter(IOSGiFrameworkAdmin.class, null);
 								try {
-									Map<Long, Bundle> allBundles = admin.getBundles();
+									Map<Long, IBundle> allBundles = admin.getBundles();
 									contentProvider.setBundles(allBundles);
 									viewer.setInput(allBundles.values());
 								} catch (CoreException e) {
@@ -397,8 +397,8 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 				@Override
 				public void run() {
 					Object obj = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-					if (obj instanceof Bundle) {
-						openDependencyPage((Bundle) obj);
+					if (obj instanceof IBundle) {
+						openDependencyPage((IBundle) obj);
 					}
 				}
 			});
@@ -417,7 +417,7 @@ public class BundleDependencyEditorPage extends AbstractBundleEditorPage impleme
 		refreshAction.run();
 	}
 
-	public void openDependencyPage(Bundle bundle) {
+	public void openDependencyPage(IBundle bundle) {
 		IEditorPart[] parts = commandManager.getServerEditor().findEditors(getEditorInput());
 		for (IEditorPart part : parts) {
 			if (part instanceof BundleInformationEditorPage) {

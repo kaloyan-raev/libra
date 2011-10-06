@@ -14,10 +14,8 @@ package org.eclipse.libra.framework.editor.ui.internal.dependencies;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.libra.framework.editor.core.model.Bundle;
-import org.eclipse.libra.framework.editor.core.model.ServiceReference;
-
-
+import org.eclipse.libra.framework.editor.core.model.IBundle;
+import org.eclipse.libra.framework.editor.core.model.IServiceReference;
 
 /**
  * @author Christian Dupuis
@@ -25,13 +23,13 @@ import org.eclipse.libra.framework.editor.core.model.ServiceReference;
  */
 public class ServiceReferenceBundleDependency extends BundleDependency {
 
-	private final Set<ServiceReference> serviceReference = new HashSet<ServiceReference>();;
+	private final Set<IServiceReference> serviceReference = new HashSet<IServiceReference>();;
 
-	public ServiceReferenceBundleDependency(Bundle exportingBundle, Bundle importingBundle) {
+	public ServiceReferenceBundleDependency(IBundle exportingBundle, IBundle importingBundle) {
 		super(exportingBundle, importingBundle);
 	}
 
-	public void addServiceReferece(ServiceReference reference) {
+	public void addServiceReferece(IServiceReference reference) {
 		serviceReference.add(reference);
 	}
 

@@ -9,27 +9,22 @@
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
  *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
-package org.eclipse.libra.framework.editor.core.model;
+package org.eclipse.libra.framework.editor.integration;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.libra.framework.editor.core.model.IServiceReference;
+
 /**
  * @author Christian Dupuis
  * @author Kaloyan Raev
  */
-public class ServiceReference implements Serializable {
-	
-	public enum Type {
-		IN_USE, REGISTERED
-	}
+public class ServiceReference implements IServiceReference {
 
-	private static final long serialVersionUID = -4896924600246187914L;
-	
 	private final Long bundleId;
 
 	private final String[] clazzes;

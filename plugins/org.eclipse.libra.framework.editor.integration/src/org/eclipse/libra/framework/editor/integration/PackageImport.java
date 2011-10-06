@@ -9,17 +9,15 @@
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
  *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
-package org.eclipse.libra.framework.editor.core.model;
+package org.eclipse.libra.framework.editor.integration;
 
-import java.io.Serializable;
+import org.eclipse.libra.framework.editor.core.model.IPackageImport;
 
 /**
  * @author Christian Dupuis
  * @author Kaloyan Raev
  */
-public class PackageImport implements Serializable {
-
-	private static final long serialVersionUID = 8376491037926415151L;
+public class PackageImport implements IPackageImport {
 
 	private final String name;
 

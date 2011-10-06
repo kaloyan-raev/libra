@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009, 2011 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.libra.framework.editor.ui.internal.dependencies;
 
@@ -16,29 +17,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.libra.framework.editor.core.model.Bundle;
-
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 public class BundleDependencyContentResult {
 
-	private final Set<Bundle> bundles;
+	private final Set<IBundle> bundles;
 
-	private final Map<Integer, Set<Bundle>> incomingDependencies = new HashMap<Integer, Set<Bundle>>();
+	private final Map<Integer, Set<IBundle>> incomingDependencies = new HashMap<Integer, Set<IBundle>>();
 
-	private final Map<Integer, Set<Bundle>> outgoingDependencies = new HashMap<Integer, Set<Bundle>>();
+	private final Map<Integer, Set<IBundle>> outgoingDependencies = new HashMap<Integer, Set<IBundle>>();
 
-	public BundleDependencyContentResult(Set<Bundle> bundles) {
+	public BundleDependencyContentResult(Set<IBundle> bundles) {
 		this.bundles = bundles;
 	}
 
-	public void addIncomingDependency(Integer level, Bundle bundleDependency) {
+	public void addIncomingDependency(Integer level, IBundle bundleDependency) {
 		if (!incomingDependencies.containsKey(level)) {
-			incomingDependencies.put(level, new TreeSet<Bundle>(new Comparator<Bundle>() {
+			incomingDependencies.put(level, new TreeSet<IBundle>(new Comparator<IBundle>() {
 
-				public int compare(Bundle o1, Bundle o2) {
+				public int compare(IBundle o1, IBundle o2) {
 					return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
 				}
 			}));
@@ -46,11 +47,11 @@ public class BundleDependencyContentResult {
 		incomingDependencies.get(level).add(bundleDependency);
 	}
 
-	public void addOutgoingDependency(Integer level, Bundle bundleDependency) {
+	public void addOutgoingDependency(Integer level, IBundle bundleDependency) {
 		if (!outgoingDependencies.containsKey(level)) {
-			outgoingDependencies.put(level, new TreeSet<Bundle>(new Comparator<Bundle>() {
+			outgoingDependencies.put(level, new TreeSet<IBundle>(new Comparator<IBundle>() {
 
-				public int compare(Bundle o1, Bundle o2) {
+				public int compare(IBundle o1, IBundle o2) {
 					return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
 				}
 			}));
@@ -58,15 +59,15 @@ public class BundleDependencyContentResult {
 		outgoingDependencies.get(level).add(bundleDependency);
 	}
 
-	public Set<Bundle> getBundles() {
+	public Set<IBundle> getBundles() {
 		return bundles;
 	}
 
-	public Map<Integer, Set<Bundle>> getIncomingDependencies() {
+	public Map<Integer, Set<IBundle>> getIncomingDependencies() {
 		return incomingDependencies;
 	}
 
-	public Map<Integer, Set<Bundle>> getOutgoingDependencies() {
+	public Map<Integer, Set<IBundle>> getOutgoingDependencies() {
 		return outgoingDependencies;
 	}
 

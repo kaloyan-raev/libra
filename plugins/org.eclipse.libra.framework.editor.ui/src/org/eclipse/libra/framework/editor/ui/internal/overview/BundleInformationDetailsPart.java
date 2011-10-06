@@ -43,10 +43,10 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.libra.framework.editor.core.model.Bundle;
-import org.eclipse.libra.framework.editor.core.model.PackageExport;
-import org.eclipse.libra.framework.editor.core.model.PackageImport;
-import org.eclipse.libra.framework.editor.core.model.ServiceReference;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
+import org.eclipse.libra.framework.editor.core.model.IPackageExport;
+import org.eclipse.libra.framework.editor.core.model.IPackageImport;
+import org.eclipse.libra.framework.editor.core.model.IServiceReference;
 import org.eclipse.libra.framework.editor.ui.internal.EditorUIPlugin;
 import org.eclipse.libra.framework.editor.ui.internal.overview.BundleInformationDetailsPart.ServicesContentProvider.ServicesHolder;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -89,7 +89,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.osgi.framework.Constants;
 
-
 /**
  * @author Christian Dupuis
  * @author Kaloyan Raev
@@ -99,28 +98,28 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 	class PackageExportContentProvider implements ITreeContentProvider {
 
-		private Bundle bundle;
+		private IBundle bundle;
 
 		public void dispose() {
 
 		}
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof PackageExport) {
-				Set<Bundle> bundles = new HashSet<Bundle>();
-				String name = ((PackageExport) parentElement).getName();
-				String version = ((PackageExport) parentElement).getVersion();
+			if (parentElement instanceof IPackageExport) {
+				Set<IBundle> bundles = new HashSet<IBundle>();
+				String name = ((IPackageExport) parentElement).getName();
+				String version = ((IPackageExport) parentElement).getVersion();
 				String id = bundle.getId();
 
-				for (Bundle bundle : BundleInformationDetailsPart.this.bundles.values()) {
-					for (PackageImport pi : bundle.getPackageImports()) {
+				for (IBundle bundle : BundleInformationDetailsPart.this.bundles.values()) {
+					for (IPackageImport pi : bundle.getPackageImports()) {
 						if (pi.getSupplierId().equals(id) && pi.getName().equals(name)
 								&& pi.getVersion().equals(version)) {
 							bundles.add(bundle);
 						}
 					}
 				}
-				return bundles.toArray(new Bundle[bundles.size()]);
+				return bundles.toArray(new IBundle[bundles.size()]);
 			}
 			return new Object[0];
 		}
@@ -141,21 +140,21 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			bundle = (Bundle) newInput;
+			bundle = (IBundle) newInput;
 		}
 	}
 
 	class PackageImportContentProvider implements ITreeContentProvider {
 
-		private Bundle bundle;
+		private IBundle bundle;
 
 		public void dispose() {
 
 		}
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof PackageImport) {
-				String supplierId = ((PackageImport) parentElement).getSupplierId();
+			if (parentElement instanceof IPackageImport) {
+				String supplierId = ((IPackageImport) parentElement).getSupplierId();
 				return new Object[] { bundles.get(Long.valueOf(supplierId)) };
 			}
 			return new Object[0];
@@ -177,7 +176,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			bundle = (Bundle) newInput;
+			bundle = (IBundle) newInput;
 		}
 	}
 
@@ -191,13 +190,13 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		 */
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof PackageImport) {
+			if (element instanceof IPackageImport) {
 				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE);
 			}
-			else if (element instanceof PackageExport) {
+			else if (element instanceof IPackageExport) {
 				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE);
 			}
-			else if (element instanceof Bundle) {
+			else if (element instanceof IBundle) {
 				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 			}
 			return super.getImage(element);
@@ -205,14 +204,14 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof PackageImport) {
-				return ((PackageImport) element).getName() + " (" + ((PackageImport) element).getVersion() + ")";
+			if (element instanceof IPackageImport) {
+				return ((IPackageImport) element).getName() + " (" + ((IPackageImport) element).getVersion() + ")";
 			}
-			else if (element instanceof PackageExport) {
-				return ((PackageExport) element).getName() + " (" + ((PackageExport) element).getVersion() + ")";
+			else if (element instanceof IPackageExport) {
+				return ((IPackageExport) element).getName() + " (" + ((IPackageExport) element).getVersion() + ")";
 			}
-			else if (element instanceof Bundle) {
-				return ((Bundle) element).getSymbolicName() + " (" + ((Bundle) element).getVersion() + ")";
+			else if (element instanceof IBundle) {
+				return ((IBundle) element).getSymbolicName() + " (" + ((IBundle) element).getVersion() + ")";
 			}
 			return super.getText(element);
 		}
@@ -231,7 +230,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 	class ServicePropertyContentProvider implements IStructuredContentProvider {
 
-		private ServiceReference ref;
+		private IServiceReference ref;
 
 		public void dispose() {
 		}
@@ -244,8 +243,8 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (newInput instanceof ServiceReference) {
-				ref = (ServiceReference) newInput;
+			if (newInput instanceof IServiceReference) {
+				ref = (IServiceReference) newInput;
 			}
 			else {
 				ref = null;
@@ -279,9 +278,9 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 			private final String label;
 
-			private final Set<ServiceReference> refs;
+			private final Set<IServiceReference> refs;
 
-			public ServicesHolder(Set<ServiceReference> refs, String label) {
+			public ServicesHolder(Set<IServiceReference> refs, String label) {
 				this.refs = refs;
 				this.label = label;
 			}
@@ -293,12 +292,12 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 				return label;
 			}
 
-			public Set<ServiceReference> getRefs() {
+			public Set<IServiceReference> getRefs() {
 				return refs;
 			}
 		}
 
-		private Bundle bundle;
+		private IBundle bundle;
 
 		public void dispose() {
 
@@ -308,13 +307,13 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 			if (parentElement instanceof ServicesHolder) {
 				return ((ServicesHolder) parentElement).getRefs().toArray();
 			}
-			else if (parentElement instanceof ServiceReference) {
-				Set<Bundle> bs = new HashSet<Bundle>();
-				ServiceReference ref = (ServiceReference) parentElement;
-				if (ref.getType() == ServiceReference.Type.IN_USE) {
+			else if (parentElement instanceof IServiceReference) {
+				Set<IBundle> bs = new HashSet<IBundle>();
+				IServiceReference ref = (IServiceReference) parentElement;
+				if (ref.getType() == IServiceReference.Type.IN_USE) {
 					bs.add(bundles.get(ref.getBundleId()));
 				}
-				else if (ref.getType() == ServiceReference.Type.REGISTERED) {
+				else if (ref.getType() == IServiceReference.Type.REGISTERED) {
 					for (Long id : ref.getUsingBundleIds()) {
 						bs.add(bundles.get(id));
 					}
@@ -347,7 +346,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			bundle = (Bundle) newInput;
+			bundle = (IBundle) newInput;
 		}
 	}
 
@@ -355,13 +354,13 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof ServiceReference) {
+			if (element instanceof IServiceReference) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
 			}
 			else if (element instanceof ServicesHolder) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
 			}
-			else if (element instanceof Bundle) {
+			else if (element instanceof IBundle) {
 				return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 			}
 			return super.getImage(element);
@@ -369,15 +368,15 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof ServiceReference) {
-				String id = ((ServiceReference) element).getProperties().get(Constants.SERVICE_ID);
+			if (element instanceof IServiceReference) {
+				String id = ((IServiceReference) element).getProperties().get(Constants.SERVICE_ID);
 				if (id.length() > 0) {
-					return ((ServiceReference) element).getClazzes()[0] + " (" + id + ")";
+					return ((IServiceReference) element).getClazzes()[0] + " (" + id + ")";
 				}
-				return ((ServiceReference) element).getClazzes()[0];
+				return ((IServiceReference) element).getClazzes()[0];
 			}
-			else if (element instanceof Bundle) {
-				return ((Bundle) element).getSymbolicName() + " (" + ((Bundle) element).getVersion() + ")";
+			else if (element instanceof IBundle) {
+				return ((IBundle) element).getSymbolicName() + " (" + ((IBundle) element).getVersion() + ")";
 			}
 			else if (element instanceof ServicesHolder) {
 				return ((ServicesHolder) element).getLabel();
@@ -386,9 +385,9 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 		}
 	}
 
-	private Bundle bundle;
+	private IBundle bundle;
 
-	private Map<Long, Bundle> bundles;
+	private Map<Long, IBundle> bundles;
 
 	private Text bundleSymbolicNameText;
 
@@ -678,12 +677,12 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 
 	}
 
-	public void refresh(Map<Long, Bundle> bundles) {
+	public void refresh(Map<Long, IBundle> bundles) {
 		this.bundles = bundles;
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		bundle = (Bundle) ((IStructuredSelection) selection).getFirstElement();
+		bundle = (IBundle) ((IStructuredSelection) selection).getFirstElement();
 
 		idText.setText(bundle.getId());
 		stateText.setText(bundle.getState());
@@ -737,7 +736,7 @@ public class BundleInformationDetailsPart extends AbstractFormPart implements ID
 	
 
 	
-	private void openBundleEditor(Bundle bundle) {
+	private void openBundleEditor(IBundle bundle) {
 		try {
 			String fileName = "META-INF/MANIFEST.MF";
 			File bundleRoot = new File(new URI(bundle.getLocation()));

@@ -28,10 +28,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.libra.framework.editor.core.IOSGiFrameworkAdmin;
-import org.eclipse.libra.framework.editor.core.model.Bundle;
-import org.eclipse.libra.framework.editor.core.model.PackageExport;
-import org.eclipse.libra.framework.editor.core.model.PackageImport;
-import org.eclipse.libra.framework.editor.core.model.ServiceReference;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 import org.eclipse.libra.framework.editor.integration.internal.IntegrationPlugin;
 import org.osgi.framework.Constants;
 import org.osgi.jmx.framework.BundleStateMBean;
@@ -44,8 +41,8 @@ import org.osgi.jmx.framework.ServiceStateMBean;
  */
 public class OSGiJMXFrameworkAdmin implements IOSGiFrameworkAdmin {
 
-	public Map<Long, Bundle> getBundles() throws CoreException {
-		Map<Long, Bundle> map = new HashMap<Long, Bundle>();
+	public Map<Long, IBundle> getBundles() throws CoreException {
+		Map<Long, IBundle> map = new HashMap<Long, IBundle>();
 		
 		try {
 			MBeanServerConnection connection = getMBeanServerConnection();

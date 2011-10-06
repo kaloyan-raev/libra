@@ -8,16 +8,14 @@
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.libra.framework.editor.core.model;
+package org.eclipse.libra.framework.editor.integration;
 
-import java.io.Serializable;
+import org.eclipse.libra.framework.editor.core.model.IPackageExport;
 
 /**
  * @author Christian Dupuis
  */
-public class PackageExport implements Serializable {
-
-	private static final long serialVersionUID = -4798012781542524159L;
+public class PackageExport implements IPackageExport {
 
 	private final String name;
 

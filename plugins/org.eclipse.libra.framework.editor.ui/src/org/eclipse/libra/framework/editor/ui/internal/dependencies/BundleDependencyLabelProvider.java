@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.libra.framework.editor.core.model.Bundle;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -26,7 +26,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.zest.core.widgets.ZestStyles;
-
 
 /**
  * @author Christian Dupuis
@@ -74,8 +73,8 @@ public class BundleDependencyLabelProvider implements ILabelProvider, IEntitySty
 	}
 
 	public Color getBackgroundColour(Object entity) {
-		if (entity instanceof Bundle) {
-			if (contentProvider.isSelected((Bundle) entity)) {
+		if (entity instanceof IBundle) {
+			if (contentProvider.isSelected((IBundle) entity)) {
 				return colorRelated;
 			}
 		}
@@ -122,7 +121,7 @@ public class BundleDependencyLabelProvider implements ILabelProvider, IEntitySty
 	}
 
 	public Image getImage(Object element) {
-		if (element instanceof Bundle) {
+		if (element instanceof IBundle) {
 			return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 		}
 		return null;
@@ -137,8 +136,8 @@ public class BundleDependencyLabelProvider implements ILabelProvider, IEntitySty
 	}
 
 	public String getText(Object element) {
-		if (element instanceof Bundle) {
-			return ((Bundle) element).getSymbolicName() + " (" + ((Bundle) element).getVersion() + ")";
+		if (element instanceof IBundle) {
+			return ((IBundle) element).getSymbolicName() + " (" + ((IBundle) element).getVersion() + ")";
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009, 2011 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.libra.framework.editor.ui.internal.overview;
 
@@ -15,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.libra.framework.editor.core.model.Bundle;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 import org.eclipse.libra.framework.editor.ui.dependencies.BundleDependencyEditorPage;
 import org.eclipse.libra.framework.editor.ui.overview.BundleInformationEditorPage;
 import org.eclipse.swt.SWT;
@@ -32,6 +33,8 @@ import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IDetailsPage;
+import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -42,10 +45,10 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.wst.server.core.IServer;
 
-
 /**
  * @author Christian Dupuis
  * @author Steffen Pingel
+ * @author Kaloyan Raev
  */
 public class BundleInformationMasterDetailsBlock extends MasterDetailsBlock {
 
@@ -114,13 +117,28 @@ public class BundleInformationMasterDetailsBlock extends MasterDetailsBlock {
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 		this.detailsPart = new BundleInformationDetailsPart(this);
-		detailsPart.registerPage(Bundle.class, this.detailsPart);
+		detailsPart.setPageProvider(new IDetailsPageProvider() {
+			
+			public Object getPageKey(Object object) {
+				if (object instanceof IBundle) {
+					return IBundle.class;
+				}
+				return object.getClass();
+			}
+			
+			public IDetailsPage getPage(Object key) {
+				if (key.equals(IBundle.class)) {
+					return BundleInformationMasterDetailsBlock.this.detailsPart;
+				}
+				return null;
+			}
+		});
 	}
 
 	/**
 	 * @param bundles
 	 */
-	public void refresh(Map<Long, Bundle> bundles) {
+	public void refresh(Map<Long, IBundle> bundles) {
 		masterPart.refresh(bundles);
 		detailsPart.refresh(bundles);
 	}
@@ -250,7 +268,7 @@ public class BundleInformationMasterDetailsBlock extends MasterDetailsBlock {
 		return server;
 	}
 
-	public void setSelectedBundle(Bundle bundle) {
+	public void setSelectedBundle(IBundle bundle) {
 		masterPart.setSelectedBundle(bundle);
 	}
 

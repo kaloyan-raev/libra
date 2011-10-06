@@ -8,26 +8,34 @@
  * Contributors:
  *     SAP AG - initial API and implementation
  *******************************************************************************/
-package org.eclipse.libra.framework.editor.core;
+package org.eclipse.libra.framework.editor.core.model;
 
 import java.util.Map;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.libra.framework.editor.core.model.IBundle;
+import java.util.Set;
 
 /**
  * @author Kaloyan Raev
  */
-public interface IOSGiFrameworkAdmin {
+public interface IBundle {
+
+	public String getId();
+
+	public String getSymbolicName();
+
+	public String getVersion();
+
+	public String getState();
+
+	public String getLocation();
 	
-	public Map<Long, IBundle> getBundles() throws CoreException;
+	public Map<String, String> getHeaders();
+
+	public Set<IPackageExport> getPackageExports();
+
+	public Set<IPackageImport> getPackageImports();
 	
-	public void startBundle(long bundleId) throws CoreException;
-	
-	public void stopBundle(long bundleId) throws CoreException;
-	
-	public void refreshBundle(long bundleId) throws CoreException;
-	
-	public void updateBundle(long bundleId) throws CoreException;
+	public Set<IServiceReference> getRegisteredServices();
+
+	public Set<IServiceReference> getServicesInUse();
 
 }

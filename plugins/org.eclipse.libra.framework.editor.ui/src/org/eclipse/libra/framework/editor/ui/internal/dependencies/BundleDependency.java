@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipse.libra.framework.editor.ui.internal.dependencies;
 
-import org.eclipse.libra.framework.editor.core.model.Bundle;
-
-
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 
 /**
  * @author Christian Dupuis
@@ -21,20 +19,20 @@ import org.eclipse.libra.framework.editor.core.model.Bundle;
  */
 public abstract class BundleDependency {
 
-	private final Bundle exportingBundle;
+	private final IBundle exportingBundle;
 
-	private final Bundle importingBundle;
+	private final IBundle importingBundle;
 
-	public BundleDependency(Bundle exportingBundle, Bundle importingBundle) {
+	public BundleDependency(IBundle exportingBundle, IBundle importingBundle) {
 		this.exportingBundle = exportingBundle;
 		this.importingBundle = importingBundle;
 	}
 
-	public Bundle getExportingBundle() {
+	public IBundle getExportingBundle() {
 		return exportingBundle;
 	}
 
-	public Bundle getImportingBundle() {
+	public IBundle getImportingBundle() {
 		return importingBundle;
 	}
 

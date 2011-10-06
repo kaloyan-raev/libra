@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 SpringSource, a divison of VMware, Inc.
+ * Copyright (c) 2009, 2011 SpringSource, a divison of VMware, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     SpringSource, a division of VMware, Inc. - initial API and implementation
+ *     SAP AG - moving to Eclipse Libra project and enhancements
  *******************************************************************************/
 package org.eclipse.libra.framework.editor.ui.internal.dependencies;
 
@@ -14,7 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.libra.framework.editor.core.model.Bundle;
+import org.eclipse.libra.framework.editor.core.model.IBundle;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.LayoutEntity;
@@ -22,9 +23,9 @@ import org.eclipse.zest.layouts.algorithms.AbstractLayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.InternalNode;
 import org.eclipse.zest.layouts.dataStructures.InternalRelationship;
 
-
 /**
  * @author Christian Dupuis
+ * @author Kaloyan Raev
  */
 public class BundleDependencyLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
@@ -40,9 +41,9 @@ public class BundleDependencyLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 
 		BundleDependencyContentResult contentResult = this.contentProvider.getContentResult();
-		Set<Bundle> rootBundles = contentResult.getBundles();
+		Set<IBundle> rootBundles = contentResult.getBundles();
 
-		Set<Bundle> bundlesProcessed = new HashSet<Bundle>();
+		Set<IBundle> bundlesProcessed = new HashSet<IBundle>();
 
 		if (contentResult != null) {
 			Set<ColumnHolder> columnNodes = new HashSet<ColumnHolder>();
@@ -56,15 +57,15 @@ public class BundleDependencyLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			int degree = contentResult.getIncomingDegree();
 			while (degree > 0) {
 				Set<InternalNode> degreeNodes = new HashSet<InternalNode>();
-				Set<Bundle> deps = contentResult.getIncomingDependencies().get(degree);
-				for (Bundle bundle : deps) {
+				Set<IBundle> deps = contentResult.getIncomingDependencies().get(degree);
+				for (IBundle bundle : deps) {
 					if (!bundlesProcessed.contains(bundle)
 							&& !rootBundles.contains(bundle)
 							&& lowestRanking(bundle, contentResult.getIncomingDegree(), contentResult
 									.getIncomingDependencies()) == degree) {
 						for (InternalNode node : entitiesToLayout) {
 							LayoutEntity obj = node.getLayoutEntity();
-							Bundle graphBundle = (Bundle) ((GraphNode) obj.getGraphData()).getData();
+							IBundle graphBundle = (IBundle) ((GraphNode) obj.getGraphData()).getData();
 							if (graphBundle.equals(bundle)) {
 								columnWith = Math.max(columnWith, node.getWidthInLayout());
 								node.setLocation(currentX, currentY);
@@ -101,10 +102,10 @@ public class BundleDependencyLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			}
 
 			Set<InternalNode> rootNodes = new HashSet<InternalNode>();
-			for (Bundle bundle : rootBundles) {
+			for (IBundle bundle : rootBundles) {
 				for (InternalNode node : entitiesToLayout) {
 					LayoutEntity obj = node.getLayoutEntity();
-					Bundle graphBundle = (Bundle) ((GraphNode) obj.getGraphData()).getData();
+					IBundle graphBundle = (IBundle) ((GraphNode) obj.getGraphData()).getData();
 					if (graphBundle.equals(bundle)) {
 						columnWith = Math.max(columnWith, node.getWidthInLayout());
 						node.setLocation(currentX, currentY);
@@ -136,15 +137,15 @@ public class BundleDependencyLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			degree = 1;
 			while (degree <= maxDegree) {
 				Set<InternalNode> degreeNodes = new HashSet<InternalNode>();
-				Set<Bundle> deps = contentResult.getOutgoingDependencies().get(degree);
-				for (Bundle bundle : deps) {
+				Set<IBundle> deps = contentResult.getOutgoingDependencies().get(degree);
+				for (IBundle bundle : deps) {
 					if (!bundlesProcessed.contains(bundle)
 							&& !rootBundles.contains(bundle)
 							&& lowestRanking(bundle, contentResult.getOutgoingDegree(), contentResult
 									.getOutgoingDependencies()) == degree) {
 						for (InternalNode node : entitiesToLayout) {
 							LayoutEntity obj = node.getLayoutEntity();
-							Bundle graphBundle = (Bundle) ((GraphNode) obj.getGraphData()).getData();
+							IBundle graphBundle = (IBundle) ((GraphNode) obj.getGraphData()).getData();
 							if (graphBundle.equals(bundle)) {
 								columnWith = Math.max(columnWith, node.getWidthInLayout());
 								node.setLocation(currentX, currentY);
@@ -188,10 +189,10 @@ public class BundleDependencyLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		}
 	}
 
-	private int lowestRanking(Bundle bundle, int maxDegree, Map<Integer, Set<Bundle>> bundles) {
+	private int lowestRanking(IBundle bundle, int maxDegree, Map<Integer, Set<IBundle>> bundles) {
 		int ranking = 1;
 		while (ranking <= maxDegree) {
-			for (Bundle b : bundles.get(ranking)) {
+			for (IBundle b : bundles.get(ranking)) {
 				if (b.equals(bundle)) {
 					return ranking;
 				}
