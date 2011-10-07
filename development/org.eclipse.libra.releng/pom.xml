@@ -45,6 +45,10 @@
 		<module>../../plugins/org.eclipse.libra.framework.jonas.ui</module>
 		<module>../../plugins/org.eclipse.libra.framework.knopflerfish</module>
 		<module>../../plugins/org.eclipse.libra.framework.knopflerfish.ui</module>
+		<module>../../plugins/org.eclipse.libra.framework.editor.core</module>
+		<module>../../plugins/org.eclipse.libra.framework.editor.ui</module>
+		<module>../../features/org.eclipse.libra.framework.editor.feature</module>
+		<module>../../features/org.eclipse.libra.framework.editor.feature.source</module>
 
 	</modules>
 
